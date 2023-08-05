@@ -1,0 +1,12 @@
+# https://manytools.org/hacker-tools/convert-images-to-ascii-art/go/
+
+os:
+  application-folder:
+    linux: .wdt
+    windows: WDT
+
+default-properties:
+  port: 4000
+  async-port: 4001
+  protocol: tcp
+  encryption: false

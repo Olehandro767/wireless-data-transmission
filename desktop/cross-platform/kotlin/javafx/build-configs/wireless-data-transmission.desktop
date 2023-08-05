@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=WDT
+Icon=logo.png
+StartupWMClass=Main
+Exec="wdt" %u
+Version=1.0
+Type=Application
+Categories=Multimedia;
+Terminal=false
+StartupNotify=true

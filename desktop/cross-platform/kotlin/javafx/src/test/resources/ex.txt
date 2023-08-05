@@ -1,0 +1,5 @@
+(accept_file_or_folder)::<File or Folder>,file name.txt,1024 -> true or false -> continue or not
+(get_clipboard) -> true or false -> copy or not
+(send_clipboard) -> true or false -> copy or not
+(get_file_system) -> true or false -> fs or not
+(stop) -> stop listening
