@@ -1,6 +1,7 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import ua.edu.ontu.wdt.layer.*
 import ua.edu.ontu.wdt.layer.dto.GetInfoDto
 import ua.edu.ontu.wdt.layer.dto.file.ConfirmFileDto
@@ -42,12 +43,12 @@ class TcpAcceptFileService(
             val buffer = ByteArray(this.context.dataBufferSize)
             val file = File(path)
             val fileOutputStream = FileOutputStream(file)
-            var readDataSize: Int
-            var fileAcceptedLength = 0
+            var readDataSize = 0
+            var fileAcceptedLength = 0L
             this.logger.info(path)
 
-            while (messageReader.read(buffer).also { readDataSize = it } > 0) {
-                fileAcceptedLength += readDataSize
+            while (fileLength != fileAcceptedLength && messageReader.read(buffer).also { readDataSize = it } > 0) {
+                fileAcceptedLength += readDataSize.toLong()
                 fileOutputStream.write(buffer, 0, readDataSize)
                 this.progressUiObserver.notifyUi(FileProgressDto(
                     fileLength,
@@ -59,58 +60,57 @@ class TcpAcceptFileService(
         }
     }
 
-    private suspend fun acceptFolder(messageReader: DataInputStream, acceptedFilesValue: AtomicInteger) {
-        withContext(this.ioDispatcher) {
-            messageHandler.handleAcceptedMessage(messageReader.readUTF()).let {
-                if (it != "{}/*IGNORE_THIS_FOLDER/*{}") {
-                    File("${context.downloadFolderPath}/$it").mkdirs()
+    @Deprecated("more async")
+    private fun acceptFolder(messageReader: DataInputStream, acceptedFilesValue: AtomicInteger) {
+        messageHandler.handleAcceptedMessage(messageReader.readUTF()).let {
+            if (it != "{}/*IGNORE_THIS_FOLDER/*{}") {
+                File("${context.downloadFolderPath}/$it").mkdirs()
 
-                    if (messageReader.readBoolean()) {
-                        acceptFolder(messageReader, acceptedFilesValue)
-                    } else {
-                        acceptFile(messageReader, acceptedFilesValue)
-                    }
+                if (messageReader.readBoolean()) {
+                    acceptFolder(messageReader, acceptedFilesValue)
+                } else {
+                    acceptFile(messageReader, acceptedFilesValue)
                 }
             }
         }
     }
 
-    private suspend fun newConnection(
+    private suspend fun asyncTask(task: () -> Unit) {
+        task()
+    }
+
+    private fun newConnection(
         ip: String,
         infoWithToken: String,
         acceptedFilesValue: AtomicInteger,
         isRunning: AtomicBoolean
     ) {
-        withContext(this.ioDispatcher) {
-            Socket(ip, context.asyncPort).let {
-                val messageReader = TcpUtils.createMessagesReader(it)
-                val messageSender = TcpUtils.createMessageSender(it)
+        Socket(ip, context.asyncPort).let {
+            val messageReader = TcpUtils.createMessagesReader(it)
+            val messageSender = TcpUtils.createMessageSender(it)
+
+            if (messageReader.readBoolean()) {
+                logger.info("Accepted new Connection")
+                messageSender.writeBoolean(isRunning.get())
+                messageSender.writeUTF(messageHandler.handleMessageBeforeSend(infoWithToken))
+                messageSender.flush()
 
                 if (messageReader.readBoolean()) {
-                    logger.info("Accepted new Connection")
-                    messageSender.writeBoolean(isRunning.get())
-                    messageSender.writeUTF(messageHandler.handleMessageBeforeSend(infoWithToken))
-                    messageSender.flush()
-
-                    if (messageReader.readBoolean()) {
-                        when (messageHandler.handleAcceptedMessage(messageReader.readUTF())) {
-                            "file" -> acceptFile(messageReader, acceptedFilesValue)
-                            "folder" -> acceptFolder(messageReader, acceptedFilesValue)
-                        }
-                    } else {
-                        onProblemObserver.notifyUi("invalid_token")
-                        it.close()
+                    when (messageHandler.handleAcceptedMessage(messageReader.readUTF())) {
+                        "file" -> acceptFile(messageReader, acceptedFilesValue)
+                        "folder" -> acceptFolder(messageReader, acceptedFilesValue)
                     }
                 } else {
-                    onProblemObserver.notifyUi("canceled_file_sending")
+                    onProblemObserver.notifyUi("invalid_token")
                     it.close()
                 }
+            } else {
+                onProblemObserver.notifyUi("canceled_file_sending")
+                it.close()
             }
         }
-
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun invoke(request: RequestDto<Socket>) {
         val recipientInfo = DeviceRequestAbstractFactory.createDeviceRequestFactory(this.context)
             .createGetInfoRequestBuilder().doRequest(request.context.inetAddress.hostAddress)
@@ -140,7 +140,7 @@ class TcpAcceptFileService(
                 this.onCancelObserver.notifyUi(isRunning)
 
                 for (ignore in 1..parsedFileInfo[0].toInt()) {
-                    GlobalScope.launch { newConnection(recipientInfo.ip, infoWithToken, acceptedFiles, isRunning) }
+                    newConnection(recipientInfo.ip, infoWithToken, acceptedFiles, isRunning)
                 }
 
                 this.onEnd(request)

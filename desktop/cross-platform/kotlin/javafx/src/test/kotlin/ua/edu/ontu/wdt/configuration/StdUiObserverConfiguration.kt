@@ -14,7 +14,9 @@ class StdUiObserverConfiguration(
     private val stdLogger: StdLogger,
 ): IUiObserverAndMessageConfiguration {
 
-    override fun createProgressObserverForSendFileRule(): IUiGenericObserver<FileProgressDto> = EmptyUiObserver()
+    override fun createProgressObserverForSendFileRule(): IUiGenericObserver<FileProgressDto> = IUiGenericObserver { dto -> run {
+        this.stdLogger.info(dto.toString())
+    } }
 
     override fun createFinishObserverForSendFileRule(): IUiObserver  = EmptyUiObserver<Any>()
 

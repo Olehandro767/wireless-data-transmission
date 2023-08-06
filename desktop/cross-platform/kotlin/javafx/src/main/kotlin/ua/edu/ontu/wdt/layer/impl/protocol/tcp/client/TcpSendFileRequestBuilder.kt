@@ -1,6 +1,8 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.client
 
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.Dispatchers
 import ua.edu.ontu.wdt.layer.*
 import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.SEND_FILES_OR_FOLDERS
 import ua.edu.ontu.wdt.layer.dto.GetInfoDto
@@ -30,6 +32,10 @@ class TcpSendFileRequestBuilder(
 
     private val random: Random = Random()
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
+
+    private suspend fun asyncTask(task: () -> Unit) {
+        task()
+    }
 
     private fun countFiles(vararg files: File): Int {
         var size = 0
@@ -85,7 +91,7 @@ class TcpSendFileRequestBuilder(
 
         if (fileLength > 0) {
             messageSender.writeUTF(this.messageHandler.handleMessageBeforeSend(if (rootFolderName != null) {
-                "${file.absolutePath.substring(file.absolutePath.lastIndexOf(rootFolderName))}/${file.name},${file.length()}"
+                "${file.absolutePath.substring(file.absolutePath.lastIndexOf(rootFolderName))},${file.length()}"
             } else {
                 "${file.name},${file.length()}"
             }))
@@ -122,7 +128,8 @@ class TcpSendFileRequestBuilder(
         }
     }
 
-    private suspend fun sendFolder(
+    @Deprecated("more async")
+    private fun sendFolder(
         serverSocket: ServerSocket,
         file: File,
         messageSender: DataOutputStream,
@@ -132,31 +139,34 @@ class TcpSendFileRequestBuilder(
         isRunning: AtomicBoolean
     ) {
         val childFiles = file.listFiles()
-        withContext(this.ioDispatcher) {
-            if (childFiles != null) {
-                messageSender.writeUTF(messageHandler.handleMessageBeforeSend(file.absolutePath.substring(
-                    file.absolutePath.indexOf(rootFolderName)
-                )))
-                messageSender.flush()
+        if (childFiles != null) {
+            messageSender.writeUTF(messageHandler.handleMessageBeforeSend(file.absolutePath.substring(
+                file.absolutePath.indexOf(rootFolderName)
+            )))
+            messageSender.flush()
 
-                for (item in childFiles) {
+            for (item in childFiles) {
+                if (item.isDirectory) {
                     messageSender.writeBoolean(item.isDirectory)
                     messageSender.flush()
-
-                    if (item.isDirectory) {
-                        sendFolder(serverSocket, item, messageSender, numberOfFiles, sentFiles, rootFolderName, isRunning)
-                    } else {
-                        sendFile(serverSocket, item, messageSender, numberOfFiles, sentFiles, isRunning, rootFolderName)
-                    }
+                    sendFolder(serverSocket, item, messageSender, numberOfFiles, sentFiles, rootFolderName, isRunning)
                 }
-            } else {
-                messageSender.writeUTF(messageHandler.handleMessageBeforeSend("{}/*IGNORE_THIS_FOLDER/*{}"))
-                messageSender.flush()
             }
+
+            for (item in childFiles) {
+                if (!item.isDirectory) {
+                    messageSender.writeBoolean(item.isDirectory)
+                    messageSender.flush()
+                    sendFile(serverSocket, item, messageSender, numberOfFiles, sentFiles, isRunning, rootFolderName)
+                }
+            }
+        } else {
+            messageSender.writeUTF(messageHandler.handleMessageBeforeSend("{}/*IGNORE_THIS_FOLDER/*{}"))
+            messageSender.flush()
         }
     }
 
-    private suspend fun sendData(
+    private fun sendData(
         serverSocket: ServerSocket,
         file: File,
         socket: Socket,
@@ -168,45 +178,46 @@ class TcpSendFileRequestBuilder(
         this.logger.info("Prepare: ${file.name}")
         val messageReader = TcpUtils.createMessagesReader(socket)
         val messageSender = TcpUtils.createMessageSender(socket)
-        withContext(this.ioDispatcher) {
-            messageSender.writeBoolean(isRunning.get())
-            messageSender.flush()
+        messageSender.writeBoolean(isRunning.get())
+        messageSender.flush()
 
-            if (messageReader.readBoolean()) {
-                if (messageHandler.handleAcceptedMessage(messageReader.readUTF()) == infoWithToken) {
-                    messageSender.writeBoolean(true)
+        if (messageReader.readBoolean()) {
+            if (messageHandler.handleAcceptedMessage(messageReader.readUTF()) == infoWithToken) {
+                messageSender.writeBoolean(true)
+                messageSender.flush()
+
+                if (file.isDirectory) {
+                    logger.info("Sending dir(${file.name}) in new thread")
+                    messageSender.writeUTF(messageHandler.handleMessageBeforeSend("folder"))
                     messageSender.flush()
-
-                    if (file.isDirectory) {
-                        logger.info("Sending dir(${file.name}) in new thread")
-                        messageSender.writeUTF(messageHandler.handleMessageBeforeSend("folder"))
-                        messageSender.flush()
-                        sendFolder(
-                            serverSocket,
-                            file,
-                            messageSender,
-                            numberOfFiles,
-                            sentFiles,
-                            file.absolutePath.substring(file.absolutePath.indexOf(file.name)),
-                            isRunning
-                        )
-                    } else {
-                        messageSender.writeUTF(messageHandler.handleMessageBeforeSend("file"))
-                        messageSender.flush()
-                        sendFile(serverSocket, file, messageSender, numberOfFiles, sentFiles, isRunning, null)
-                    }
+                    sendFolder(
+                        serverSocket,
+                        file,
+                        messageSender,
+                        numberOfFiles,
+                        sentFiles,
+                        file.absolutePath.substring(file.absolutePath.indexOf(file.name)),
+                        isRunning
+                    )
                 } else {
-                    messageSender.writeBoolean(false)
+                    messageSender.writeUTF(messageHandler.handleMessageBeforeSend("file"))
                     messageSender.flush()
-                    onProblemObserver.notifyUi("invalid_device")
+                    sendFile(serverSocket, file, messageSender, numberOfFiles, sentFiles, isRunning, null)
                 }
             } else {
-                onProblemObserver.notifyUi("canceled_file_accepting")
+                messageSender.writeBoolean(false)
+                messageSender.flush()
+                onProblemObserver.notifyUi("invalid_device")
             }
+        } else {
+            onProblemObserver.notifyUi("canceled_file_accepting")
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class) // in future try: 1. create all folders 2. send files
+
+
+    // in future try: 1. create all folders 2. send files
+    @OptIn(DelicateCoroutinesApi::class)
     override fun doRequest(ip: String, vararg files: File) {
         this.onStartObserver.notifyUi(this.getInfoConfiguration.doRequest(ip))
         val sentFiles = AtomicInteger(0)
@@ -228,9 +239,7 @@ class TcpSendFileRequestBuilder(
             for (item in files) {
                 serverSocket.accept().let {
                     logger.info("Send file: ${item.name}")
-                    runBlocking { run {
-                        sendData(serverSocket, item, it, numberOfFiles, infoWithToken, sentFiles, isRunning)
-                    } }
+                    sendData(serverSocket, item, it, numberOfFiles, infoWithToken, sentFiles, isRunning)
                 }
             }
         } else {
