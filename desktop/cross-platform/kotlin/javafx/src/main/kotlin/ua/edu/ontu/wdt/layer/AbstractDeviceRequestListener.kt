@@ -1,10 +1,10 @@
 package ua.edu.ontu.wdt.layer
 
-import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.ACCEPT_FILE_OR_FOLDER
 import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.GET_CLIPBOARD
 import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.GET_FILE_SYSTEM
 import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.GET_INFO
 import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.SEND_CLIPBOARD
+import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.SEND_FILES_OR_FOLDERS
 import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.STOP
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -40,7 +40,7 @@ abstract class AbstractDeviceRequestListener<T, C,>(
             GET_INFO -> {
                 this.getInfo(request)
             }
-            ACCEPT_FILE_OR_FOLDER -> {
+            SEND_FILES_OR_FOLDERS -> {
                 this.acceptFileOrFolder(request)
             }
             GET_CLIPBOARD -> {

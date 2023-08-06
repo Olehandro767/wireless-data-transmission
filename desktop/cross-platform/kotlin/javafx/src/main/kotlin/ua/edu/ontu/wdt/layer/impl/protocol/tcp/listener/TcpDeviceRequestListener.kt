@@ -2,6 +2,7 @@ package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
 import kotlinx.coroutines.*
 import ua.edu.ontu.wdt.layer.*
+import ua.edu.ontu.wdt.layer.impl.handler.UnsecureRequestResponseHandler
 import ua.edu.ontu.wdt.layer.impl.protocol.tcp.TcpUtils
 import java.net.ServerSocket
 import java.net.Socket
@@ -11,6 +12,8 @@ import java.util.concurrent.atomic.AtomicBoolean
 class TcpDeviceRequestListener(
     handler: IRequestResponseHandler,
     private val context: IContext,
+    uiObserverConfiguration: IUiObserverAndMessageConfiguration,
+    messageHandler: IRequestResponseHandler = UnsecureRequestResponseHandler(),
     private val semaphore: Semaphore = Semaphore(context.maxNumberOfConnections),
     private val logger: ILog = EmptyLogger(),
     onEndRule: ITcpLambda = ITcpLambda {
@@ -23,13 +26,18 @@ class TcpDeviceRequestListener(
     TcpGetClipboard(onEndRule),
     TcpSendClipboard(onEndRule),
     TcpGetFileSystem(onEndRule),
-    TcpAcceptFileService(onEndRule),
+    TcpAcceptFileService(
+        logger,
+        context,
+        onEndRule,
+        messageHandler,
+        uiObserverConfiguration.createConfirmFileMessage(),
+        uiObserverConfiguration.createProgressObserverForSendFileRule(),
+        uiObserverConfiguration.createCancelObserverForSendFileRule(),
+        uiObserverConfiguration.createBeforeSendCommonObserver(),
+        uiObserverConfiguration.createProblemObserverForSendFileRule()
+    ),
 ) {
-
-    companion object {
-        val CANCELLED_REQUEST_STATUS = 41
-        val REQUEST_ACCEPTED = 2
-    }
 
     var isRun: AtomicBoolean = AtomicBoolean(false)
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO

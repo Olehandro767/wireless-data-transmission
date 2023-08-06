@@ -41,3 +41,4 @@ build/
 *.db
 .wdt/
 WDT/
+test_folder/

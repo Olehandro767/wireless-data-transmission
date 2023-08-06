@@ -1,6 +1,6 @@
 package ua.edu.ontu.wdt.layer.dto.file
 
-data class SendFileProgressDto(
+data class FileProgressDto(
     val size: Long,
     val name: String,
     val path: String,
