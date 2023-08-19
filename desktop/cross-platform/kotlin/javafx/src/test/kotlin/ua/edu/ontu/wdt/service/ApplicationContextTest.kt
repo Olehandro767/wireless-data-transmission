@@ -8,7 +8,7 @@ import ua.edu.ontu.wdt.service.ApplicationContext.Companion.buildContext
 import ua.edu.ontu.wdt.service.ApplicationContext.Companion.readYaml
 import java.io.FileInputStream
 
-class ApplicationContexTest {
+class ApplicationContextTest {
 
     @Test
     fun test() {
