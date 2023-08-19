@@ -2,7 +2,10 @@ package ua.edu.ontu.wdt.layer.impl.protocol.tcp.client
 
 import ua.edu.ontu.wdt.layer.IContext
 import ua.edu.ontu.wdt.layer.ILog
-import ua.edu.ontu.wdt.layer.client.*
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestFactory
+import ua.edu.ontu.wdt.layer.client.IGetInfoRequest
+import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
+import ua.edu.ontu.wdt.layer.client.ISendFileRequestBuilder
 import ua.edu.ontu.wdt.layer.impl.log.EmptyLogger
 import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 

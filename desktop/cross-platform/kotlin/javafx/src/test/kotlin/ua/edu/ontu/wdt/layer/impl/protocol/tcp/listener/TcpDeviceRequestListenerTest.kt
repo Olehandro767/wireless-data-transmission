@@ -12,7 +12,6 @@ import ua.edu.ontu.wdt.service.ApplicationContext.Companion.readYaml
 import ua.edu.ontu.wdt.tools.FileTestUtils
 import java.io.File
 import java.io.FileInputStream
-import java.nio.file.Files
 
 class TcpDeviceRequestListenerTest {
 

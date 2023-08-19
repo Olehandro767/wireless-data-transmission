@@ -1,6 +1,7 @@
 package ua.edu.ontu.wdt.layer.factory
 
-import ua.edu.ontu.wdt.layer.*
+import ua.edu.ontu.wdt.layer.IContext
+import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener
 import ua.edu.ontu.wdt.layer.impl.handler.SecureRequestResponseHandle
 import ua.edu.ontu.wdt.layer.impl.handler.UnsecureRequestResponseHandler

@@ -1,7 +1,9 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
 import kotlinx.coroutines.*
-import ua.edu.ontu.wdt.layer.*
+import ua.edu.ontu.wdt.layer.AbstractDeviceRequestListener
+import ua.edu.ontu.wdt.layer.IContext
+import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
 import ua.edu.ontu.wdt.layer.client.RequestDto
 import ua.edu.ontu.wdt.layer.impl.handler.UnsecureRequestResponseHandler
