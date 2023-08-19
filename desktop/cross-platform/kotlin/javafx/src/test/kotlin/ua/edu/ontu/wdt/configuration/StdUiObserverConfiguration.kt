@@ -1,10 +1,10 @@
 package ua.edu.ontu.wdt.configuration
 
 import ua.edu.ontu.wdt.EmptyUiObserver
-import ua.edu.ontu.wdt.layer.IUiGenericConfirmMessage
-import ua.edu.ontu.wdt.layer.IUiGenericObserver
-import ua.edu.ontu.wdt.layer.IUiObserver
-import ua.edu.ontu.wdt.layer.IUiObserverAndMessageConfiguration
+import ua.edu.ontu.wdt.layer.ui.IUiGenericConfirmMessage
+import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver
+import ua.edu.ontu.wdt.layer.ui.IUiObserver
+import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 import ua.edu.ontu.wdt.layer.dto.GetInfoDto
 import ua.edu.ontu.wdt.layer.dto.file.ConfirmFileDto
 import ua.edu.ontu.wdt.layer.dto.file.FileProgressDto
@@ -18,7 +18,7 @@ class StdUiObserverConfiguration(
         this.stdLogger.info(dto.toString())
     } }
 
-    override fun createFinishObserverForSendFileRule(): IUiObserver  = EmptyUiObserver<Any>()
+    override fun createFinishObserverForSendFileRule(): IUiObserver = EmptyUiObserver<Any>()
 
     override fun createProblemObserverForSendFileRule(): IUiGenericObserver<String> = IUiGenericObserver { dto -> this.stdLogger.info("Problem: $dto") }
 

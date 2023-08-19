@@ -1,20 +1,22 @@
 package ua.edu.ontu.wdt.layer
 
-import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.GET_CLIPBOARD
-import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.GET_FILE_SYSTEM
-import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.GET_INFO
-import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.SEND_CLIPBOARD
-import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.SEND_FILES_OR_FOLDERS
-import ua.edu.ontu.wdt.layer.IDeviceRequestListener.Companion.STOP
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.GET_CLIPBOARD
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.GET_FILE_SYSTEM
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.GET_INFO
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.SEND_CLIPBOARD
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.SEND_FILES_OR_FOLDERS
+import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.STOP
+import ua.edu.ontu.wdt.layer.client.RequestDto
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class AbstractDeviceRequestListener<T, C,>(
-    private val logger: ILog,
-    private val getInfo: (RequestDto<C>) -> Unit,
-    private val getClipboard: (RequestDto<C>) -> Unit,
-    private val sendClipboard: (RequestDto<C>) -> Unit,
-    private val getFileSystem: (RequestDto<C>) -> Unit,
-    private val acceptFileOrFolder: (RequestDto<C>) -> Unit,
+        private val logger: ILog,
+        private val getInfo: (RequestDto<C>) -> Unit,
+        private val getClipboard: (RequestDto<C>) -> Unit,
+        private val sendClipboard: (RequestDto<C>) -> Unit,
+        private val getFileSystem: (RequestDto<C>) -> Unit,
+        private val acceptFileOrFolder: (RequestDto<C>) -> Unit,
 ) : IDeviceRequestListener {
 
     abstract fun initListener(): T // example: get server socket

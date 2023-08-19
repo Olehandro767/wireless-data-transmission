@@ -1,6 +1,6 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
-import ua.edu.ontu.wdt.layer.RequestDto
+import ua.edu.ontu.wdt.layer.client.RequestDto
 import java.net.Socket
 
 class TcpGetClipboard(

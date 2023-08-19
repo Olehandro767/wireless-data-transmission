@@ -1,4 +1,4 @@
-package ua.edu.ontu.wdt.layer
+package ua.edu.ontu.wdt.layer.ui
 
 import ua.edu.ontu.wdt.layer.dto.GetInfoDto
 import ua.edu.ontu.wdt.layer.dto.file.ConfirmFileDto

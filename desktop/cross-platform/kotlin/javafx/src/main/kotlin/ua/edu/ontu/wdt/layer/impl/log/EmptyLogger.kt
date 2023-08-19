@@ -1,4 +1,6 @@
-package ua.edu.ontu.wdt.layer
+package ua.edu.ontu.wdt.layer.impl.log
+
+import ua.edu.ontu.wdt.layer.ILog
 
 class EmptyLogger: ILog {
 

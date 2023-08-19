@@ -1,9 +1,13 @@
-package ua.edu.ontu.wdt.layer
+package ua.edu.ontu.wdt.layer.impl.ui
 
 import ua.edu.ontu.wdt.EmptyUiObserver
 import ua.edu.ontu.wdt.layer.dto.GetInfoDto
 import ua.edu.ontu.wdt.layer.dto.file.ConfirmFileDto
 import ua.edu.ontu.wdt.layer.dto.file.FileProgressDto
+import ua.edu.ontu.wdt.layer.ui.IUiGenericConfirmMessage
+import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver
+import ua.edu.ontu.wdt.layer.ui.IUiObserver
+import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 import java.util.concurrent.atomic.AtomicBoolean
 
 class EmptyUiObserverAndMessageConfigurationImpl: IUiObserverAndMessageConfiguration {

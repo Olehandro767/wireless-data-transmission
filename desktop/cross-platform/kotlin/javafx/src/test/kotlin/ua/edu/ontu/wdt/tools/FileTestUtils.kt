@@ -4,7 +4,7 @@ import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 
-object FileUtils {
+object FileTestUtils {
 
     private fun doTask(fileDto: TestFileDto) {
         if (fileDto.innerFiles != null) {

@@ -1,6 +1,6 @@
-package ua.edu.ontu.wdt.layer
+package ua.edu.ontu.wdt.layer.client
 
-interface IRequestResponseHandler {
+interface IIOSecurityHandler {
 
     fun handleMessageBeforeSend(message: String): String
 

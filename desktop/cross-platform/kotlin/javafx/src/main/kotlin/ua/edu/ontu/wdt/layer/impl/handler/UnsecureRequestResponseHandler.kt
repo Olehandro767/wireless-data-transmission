@@ -1,8 +1,8 @@
 package ua.edu.ontu.wdt.layer.impl.handler
 
-import ua.edu.ontu.wdt.layer.IRequestResponseHandler
+import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
 
-class UnsecureRequestResponseHandler: IRequestResponseHandler {
+class UnsecureRequestResponseHandler: IIOSecurityHandler {
 
     override fun handleMessageBeforeSend(message: String): String = message
 

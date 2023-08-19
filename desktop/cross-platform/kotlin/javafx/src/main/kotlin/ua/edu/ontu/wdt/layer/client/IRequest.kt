@@ -1,4 +1,4 @@
-package ua.edu.ontu.wdt.layer
+package ua.edu.ontu.wdt.layer.client
 
 fun interface IRequest {
 

@@ -7,6 +7,5 @@ os:
 
 default-properties:
   port: 4000
-  async-port: 4001
   protocol: tcp
   encryption: false

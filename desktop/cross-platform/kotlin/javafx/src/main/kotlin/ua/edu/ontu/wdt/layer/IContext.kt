@@ -3,6 +3,7 @@ package ua.edu.ontu.wdt.layer
 interface IContext {
 
     var port: Int
+    @Deprecated("Use Array")
     var asyncPort: Int
     var protocol: String
     var userName: String
@@ -17,4 +18,5 @@ interface IContext {
     var deviceType: DeviceType
     var isEncryptionEnabled: Boolean
     var maxNumberOfConnections: Int
+    var maxThreadsForSending: Int
 }

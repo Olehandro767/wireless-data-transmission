@@ -1,4 +1,4 @@
-package ua.edu.ontu.wdt.layer.utils.request
+package ua.edu.ontu.wdt.layer.utils
 
 object RequestUtils {
 

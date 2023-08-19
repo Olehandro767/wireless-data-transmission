@@ -1,8 +1,8 @@
 package ua.edu.ontu.wdt
 
-import ua.edu.ontu.wdt.layer.IUiGenericConfirmMessage
-import ua.edu.ontu.wdt.layer.IUiGenericObserver
-import ua.edu.ontu.wdt.layer.IUiObserver
+import ua.edu.ontu.wdt.layer.ui.IUiGenericConfirmMessage
+import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver
+import ua.edu.ontu.wdt.layer.ui.IUiObserver
 
 class EmptyUiObserver<T>: IUiGenericObserver<T>, IUiGenericConfirmMessage<T>, IUiObserver {
 

@@ -1,4 +1,4 @@
-package ua.edu.ontu.wdt.layer.utils.system
+package ua.edu.ontu.wdt.layer.utils
 
 import java.net.NetworkInterface.getNetworkInterfaces
 import java.util.regex.Pattern
