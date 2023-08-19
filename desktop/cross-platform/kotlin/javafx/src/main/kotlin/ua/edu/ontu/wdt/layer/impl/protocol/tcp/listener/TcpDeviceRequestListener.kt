@@ -16,13 +16,13 @@ import java.util.concurrent.Semaphore
 import java.util.concurrent.atomic.AtomicBoolean
 
 class TcpDeviceRequestListener(
-        handler: IIOSecurityHandler,
-        private val context: IContext,
-        uiObserverConfiguration: IUiObserverAndMessageConfiguration,
-        messageHandler: IIOSecurityHandler = UnsecureRequestResponseHandler(),
-        private val semaphore: Semaphore = Semaphore(context.maxNumberOfConnections),
-        private val logger: ILog = EmptyLogger(),
-        onEndRule: ITcpLambda = ITcpLambda {
+    handler: IIOSecurityHandler,
+    private val context: IContext,
+    uiObserverConfiguration: IUiObserverAndMessageConfiguration,
+    messageHandler: IIOSecurityHandler = UnsecureRequestResponseHandler(),
+    private val semaphore: Semaphore = Semaphore(context.maxNumberOfConnections),
+    private val logger: ILog = EmptyLogger(),
+    onEndRule: ITcpLambda = ITcpLambda {
         logger.info("Release client: ${it.context.inetAddress.hostAddress}")
         semaphore.release()
     },
@@ -43,15 +43,15 @@ class TcpDeviceRequestListener(
         uiObserverConfiguration.createBeforeSendCommonObserver(),
         uiObserverConfiguration.createProblemObserverForSendFileRule()
     ) else TcpMultiAcceptFileService(
-            logger,
-            context,
-            onEndRule,
-            messageHandler,
-            uiObserverConfiguration.createConfirmFileMessage(),
-            uiObserverConfiguration.createProgressObserverForSendFileRule(),
-            uiObserverConfiguration.createCancelObserverForSendFileRule(),
-            uiObserverConfiguration.createBeforeSendCommonObserver(),
-            uiObserverConfiguration.createProblemObserverForSendFileRule()
+        logger,
+        context,
+        onEndRule,
+        messageHandler,
+        uiObserverConfiguration.createConfirmFileMessage(),
+        uiObserverConfiguration.createProgressObserverForSendFileRule(),
+        uiObserverConfiguration.createCancelObserverForSendFileRule(),
+        uiObserverConfiguration.createBeforeSendCommonObserver(),
+        uiObserverConfiguration.createProblemObserverForSendFileRule()
     ),
 ) {
 
@@ -60,8 +60,8 @@ class TcpDeviceRequestListener(
 
     override fun initListener(): ServerSocket = ServerSocket(this.context.port)
 
-    override fun validateBeforeStop(request: RequestDto<Socket>): Boolean
-            = request.context.inetAddress.hostAddress == "127.0.0.1"
+    override fun validateBeforeStop(request: RequestDto<Socket>): Boolean =
+        request.context.inetAddress.hostAddress == "127.0.0.1"
 
     override suspend fun handleRequestAsync(isRun: AtomicBoolean, context: Socket) {
         withContext(this.ioDispatcher) {

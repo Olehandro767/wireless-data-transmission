@@ -10,7 +10,7 @@ import ua.edu.ontu.wdt.layer.ui.IUiObserver
 import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 import java.util.concurrent.atomic.AtomicBoolean
 
-class EmptyUiObserverAndMessageConfigurationImpl: IUiObserverAndMessageConfiguration {
+class EmptyUiObserverAndMessageConfigurationImpl : IUiObserverAndMessageConfiguration {
 
     override fun createProgressObserverForSendFileRule(): IUiGenericObserver<FileProgressDto> = EmptyUiObserver()
 

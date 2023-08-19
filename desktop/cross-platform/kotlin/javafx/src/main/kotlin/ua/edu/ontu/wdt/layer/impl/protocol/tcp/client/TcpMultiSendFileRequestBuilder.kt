@@ -27,17 +27,18 @@ import java.util.concurrent.atomic.AtomicInteger
 
 private data class TempFileData(val file: File, val rootFolderName: String? = null)
 
-class TcpMultiSendFileRequestBuilder( // TODO review
-        private val logger: ILog,
-        private val context: IContext,
-        private val messageHandler: IIOSecurityHandler,
-        private val getInfoConfiguration: IGetInfoRequest,
-        private val onStartObserver: IUiGenericObserver<GetInfoDto>,
-        private val progressUiObserver: IUiGenericObserver<FileProgressDto>,
-        private val onFinishObserver: IUiObserver,
-        private val onCancelObserver: IUiGenericObserver<AtomicBoolean>,
-        private val onProblemObserver: IUiGenericObserver<String>,
-): ISendFileRequestBuilder {
+class TcpMultiSendFileRequestBuilder(
+    // TODO review
+    private val logger: ILog,
+    private val context: IContext,
+    private val messageHandler: IIOSecurityHandler,
+    private val getInfoConfiguration: IGetInfoRequest,
+    private val onStartObserver: IUiGenericObserver<GetInfoDto>,
+    private val progressUiObserver: IUiGenericObserver<FileProgressDto>,
+    private val onFinishObserver: IUiObserver,
+    private val onCancelObserver: IUiGenericObserver<AtomicBoolean>,
+    private val onProblemObserver: IUiGenericObserver<String>,
+) : ISendFileRequestBuilder {
 
     private val random: Random = Random()
     private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
@@ -78,16 +79,17 @@ class TcpMultiSendFileRequestBuilder( // TODO review
     }
 
     private fun sendFile(
-            serverSocket: ServerSocket,
-            file: File,
-            messageSender: DataOutputStream,
-            numberOfFiles: Int,
-            sentFiles: AtomicInteger,
-            isRunning: AtomicBoolean,
-            rootFolderName: String?
+        serverSocket: ServerSocket,
+        file: File,
+        messageSender: DataOutputStream,
+        numberOfFiles: Int,
+        sentFiles: AtomicInteger,
+        isRunning: AtomicBoolean,
+        rootFolderName: String?
     ) {
         val fileLength = file.length()
-        val bufferSize = if (this.context.dataBufferSize < file.length()) this.context.dataBufferSize else file.length().toInt()
+        val bufferSize =
+            if (this.context.dataBufferSize < file.length()) this.context.dataBufferSize else file.length().toInt()
         val buffer = ByteArray(bufferSize)
         val fileInputStream = FileInputStream(file)
         var transferredBytes = 0
@@ -96,11 +98,15 @@ class TcpMultiSendFileRequestBuilder( // TODO review
         messageSender.flush()
 
         if (fileLength > 0) {
-            messageSender.writeUTF(this.messageHandler.handleMessageBeforeSend(if (rootFolderName != null) {
-                "${file.absolutePath.substring(file.absolutePath.lastIndexOf(rootFolderName))},${file.length()}"
-            } else {
-                "${file.name},${file.length()}"
-            }))
+            messageSender.writeUTF(
+                this.messageHandler.handleMessageBeforeSend(
+                    if (rootFolderName != null) {
+                        "${file.absolutePath.substring(file.absolutePath.lastIndexOf(rootFolderName))},${file.length()}"
+                    } else {
+                        "${file.name},${file.length()}"
+                    }
+                )
+            )
             messageSender.flush()
 
             while (isRunning.get() && fileInputStream.read(buffer).also { transferredBytes = it } > 0) {
@@ -116,12 +122,12 @@ class TcpMultiSendFileRequestBuilder( // TODO review
                 messageSender.write(this.messageHandler.handleAcceptedBytes(buffer), 0, transferredBytes)
                 messageSender.flush()
                 this.progressUiObserver.notifyUi(
-                        FileProgressDto(
-                                fileLength,
-                                file.name,
-                                file.path,
-                                ((transferredLength / fileLength) * 100).toByte()
-                        )
+                    FileProgressDto(
+                        fileLength,
+                        file.name,
+                        file.path,
+                        ((transferredLength / fileLength) * 100).toByte()
+                    )
                 )
             }
         }
@@ -135,13 +141,13 @@ class TcpMultiSendFileRequestBuilder( // TODO review
     }
 
     private suspend fun checkTokenAndSendFile(
-            socket: Socket,
-            serverSocket: ServerSocket,
-            chunk: List<TempFileData>,
-            infoWithToken: String,
-            numberOfFiles: Int,
-            sentFiles: AtomicInteger,
-            isRunning: AtomicBoolean,
+        socket: Socket,
+        serverSocket: ServerSocket,
+        chunk: List<TempFileData>,
+        infoWithToken: String,
+        numberOfFiles: Int,
+        sentFiles: AtomicInteger,
+        isRunning: AtomicBoolean,
     ) {
         withContext(this.ioDispatcher) {
             val serverMessageSender = TcpIOFactory.createMessageSender(socket)
@@ -153,7 +159,15 @@ class TcpMultiSendFileRequestBuilder( // TODO review
                 serverMessageSender.writeInt(chunk.size)
                 serverMessageSender.flush()
                 for (file in chunk) {
-                    sendFile(serverSocket, file.file, serverMessageSender, numberOfFiles, sentFiles, isRunning, file.rootFolderName)
+                    sendFile(
+                        serverSocket,
+                        file.file,
+                        serverMessageSender,
+                        numberOfFiles,
+                        sentFiles,
+                        isRunning,
+                        file.rootFolderName
+                    )
                 }
             } else {
                 serverMessageSender.writeBoolean(false)
@@ -164,11 +178,11 @@ class TcpMultiSendFileRequestBuilder( // TODO review
     }
 
     private fun prepareFoldersOnClient(
-            file: File,
-            innerFiles: Array<File>?,
-            fileArray: ArrayList<TempFileData>,
-            messageSender: DataOutputStream,
-            rootFolderName: String
+        file: File,
+        innerFiles: Array<File>?,
+        fileArray: ArrayList<TempFileData>,
+        messageSender: DataOutputStream,
+        rootFolderName: String
     ) {
         if (!innerFiles.isNullOrEmpty()) {
             val folderPath = file.absolutePath.substring(file.absolutePath.indexOf(rootFolderName))
@@ -195,7 +209,8 @@ class TcpMultiSendFileRequestBuilder( // TODO review
         val messageSender = TcpIOFactory.createMessageSender(socket)
         val messageReader = TcpIOFactory.createMessagesReader(socket)
         val numberOfFiles = this.countFiles(*files)
-        val infoWithToken = "${files.size},$numberOfFiles,${this.solveNameProblem(*files)},${this.random.nextInt(10000, 999999)}"
+        val infoWithToken =
+            "${files.size},$numberOfFiles,${this.solveNameProblem(*files)},${this.random.nextInt(10000, 999999)}"
         // send request type
         messageSender.writeUTF(this.messageHandler.handleMessageBeforeSend(prepareRequestType(SEND_FILES_OR_FOLDERS)))
         // send files info with token
@@ -222,7 +237,13 @@ class TcpMultiSendFileRequestBuilder( // TODO review
                     for (item in files) {
                         if (item.exists()) {
                             if (item.isDirectory) {
-                                this.prepareFoldersOnClient(item, item.listFiles(), fileArray, serverMessageSender, item.name)
+                                this.prepareFoldersOnClient(
+                                    item,
+                                    item.listFiles(),
+                                    fileArray,
+                                    serverMessageSender,
+                                    item.name
+                                )
                             } else {
                                 fileArray.add(TempFileData(item))
                             }
@@ -249,7 +270,8 @@ class TcpMultiSendFileRequestBuilder( // TODO review
             }
 
             val splitFileArray = ArrayUtils.splitArrayWithConsideration(
-                    fileArray, this.context.maxThreadsForSending.coerceAtMost(remountDeviceInfo.maxThreadsForSending))
+                fileArray, this.context.maxThreadsForSending.coerceAtMost(remountDeviceInfo.maxThreadsForSending)
+            )
             // number of threads
             messageSender.writeInt(splitFileArray.size)
             messageSender.flush()
@@ -257,7 +279,15 @@ class TcpMultiSendFileRequestBuilder( // TODO review
             for (chunk in splitFileArray) {
                 serverSocket.accept().let {
                     GlobalScope.launch {
-                        checkTokenAndSendFile(it, serverSocket, chunk, infoWithToken, numberOfFiles, sentFiles, isRunning)
+                        checkTokenAndSendFile(
+                            it,
+                            serverSocket,
+                            chunk,
+                            infoWithToken,
+                            numberOfFiles,
+                            sentFiles,
+                            isRunning
+                        )
                         it.close()
                     }
                 }

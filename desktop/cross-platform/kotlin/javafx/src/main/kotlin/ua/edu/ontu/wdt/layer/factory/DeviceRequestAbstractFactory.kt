@@ -13,11 +13,12 @@ import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 object DeviceRequestAbstractFactory {
 
     fun createDeviceRequestFactory(
-            context: IContext,
-            uiObserverConfiguration: IUiObserverAndMessageConfiguration = EmptyUiObserverAndMessageConfigurationImpl(),
-            logger: ILog = EmptyLogger(),
+        context: IContext,
+        uiObserverConfiguration: IUiObserverAndMessageConfiguration = EmptyUiObserverAndMessageConfigurationImpl(),
+        logger: ILog = EmptyLogger(),
     ): IDeviceRequestFactory {
-        val messageHandler = if (context.isEncryptionEnabled) SecureRequestResponseHandle() else UnsecureRequestResponseHandler()
+        val messageHandler =
+            if (context.isEncryptionEnabled) SecureRequestResponseHandle() else UnsecureRequestResponseHandler()
         return when (context.protocol) {
             "tcp" -> TcpDeviceRequestFactory(
                 context,
@@ -25,6 +26,7 @@ object DeviceRequestAbstractFactory {
                 uiObserverConfiguration,
                 logger
             )
+
             else -> throw IllegalArgumentException()
         }
     }

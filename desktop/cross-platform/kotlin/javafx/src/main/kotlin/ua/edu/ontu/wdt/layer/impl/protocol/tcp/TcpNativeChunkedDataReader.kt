@@ -8,7 +8,7 @@ class TcpNativeChunkedDataReader(
     socket: Socket,
     bufferSize: Int,
     private val ioHandler: IIOSecurityHandler,
-    private val inputStream: InputStream =  socket.getInputStream()
+    private val inputStream: InputStream = socket.getInputStream()
 ) {
 
     var readDataSize = 0

@@ -3,6 +3,7 @@ package ua.edu.ontu.wdt.layer
 interface IContext {
 
     var port: Int
+
     @Deprecated("Use Array")
     var asyncPort: Int
     var protocol: String

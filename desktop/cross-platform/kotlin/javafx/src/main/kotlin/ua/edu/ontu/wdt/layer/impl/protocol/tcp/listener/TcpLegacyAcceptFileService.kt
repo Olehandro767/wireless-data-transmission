@@ -19,7 +19,8 @@ import java.io.FileOutputStream
 import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 
-class TcpLegacyAcceptFileService( // single thread
+class TcpLegacyAcceptFileService(
+    // single thread
     private val logger: ILog,
     private val context: IContext,
     private val onEnd: ITcpLambda,
@@ -29,14 +30,16 @@ class TcpLegacyAcceptFileService( // single thread
     private val onCancelObserver: IUiGenericObserver<AtomicBoolean>,
     private val onStartObserver: IUiGenericObserver<GetInfoDto>,
     private val onProblemObserver: IUiGenericObserver<String>,
-): ITcpLambda {
+) : ITcpLambda {
 
     private fun acceptFile(socket: Socket, messageReader: TcpMessageReader, messageSender: TcpMessageSender) {
         val fileInfo = messageReader.readMessageFromRemoteDevice().split(',')
         val fileLength = fileInfo[1].toLong()
         val path = "${this.context.downloadFolderPath}/${fileInfo[0]}"
-        val bufferSize = if (this.context.dataBufferSize < fileLength) this.context.dataBufferSize else fileLength.toInt()
-        val nativeChunkedFileReader = TcpNativeChunkedDataReader(socket, bufferSize, this.messageHandler, messageReader.toInputStream())
+        val bufferSize =
+            if (this.context.dataBufferSize < fileLength) this.context.dataBufferSize else fileLength.toInt()
+        val nativeChunkedFileReader =
+            TcpNativeChunkedDataReader(socket, bufferSize, this.messageHandler, messageReader.toInputStream())
         val file = File(path)
         val fileOutputStream = FileOutputStream(file)
         var fileAcceptedLength = 0L
@@ -47,12 +50,14 @@ class TcpLegacyAcceptFileService( // single thread
             fileAcceptedLength += nativeChunkedFileReader.readDataSize
             fileOutputStream.write(nativeChunkedFileReader.buffer, 0, nativeChunkedFileReader.readDataSize)
             this.logger.info("Accept File Service: accepted chunk")
-            this.progressUiObserver.notifyUi(FileProgressDto(
-                fileLength,
-                file.name,
-                file.absolutePath,
-                ((fileAcceptedLength / fileLength) * 100).toByte()
-            ))
+            this.progressUiObserver.notifyUi(
+                FileProgressDto(
+                    fileLength,
+                    file.name,
+                    file.absolutePath,
+                    ((fileAcceptedLength / fileLength) * 100).toByte()
+                )
+            )
         }
 
         messageSender.sendMessageToRemoteDevice(true)

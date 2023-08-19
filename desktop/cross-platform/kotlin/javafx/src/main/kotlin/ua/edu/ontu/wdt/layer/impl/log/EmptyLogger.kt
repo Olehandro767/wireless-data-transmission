@@ -2,7 +2,7 @@ package ua.edu.ontu.wdt.layer.impl.log
 
 import ua.edu.ontu.wdt.layer.ILog
 
-class EmptyLogger: ILog {
+class EmptyLogger : ILog {
 
     override fun warn(msg: String) {
         // empty

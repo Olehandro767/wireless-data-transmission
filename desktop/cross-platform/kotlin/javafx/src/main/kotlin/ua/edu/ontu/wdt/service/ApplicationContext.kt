@@ -11,23 +11,23 @@ import java.lang.System.getProperty
 import java.net.InetAddress.getLocalHost
 
 class ApplicationContext(
-        override var port: Int,
-        override var asyncPort: Int = 0,
-        override var protocol: String,
-        override var appFolderName: String,
-        override var appFolderPath: String,
-        override var downloadFolderPath: String = "${getProperty("user.home")}/Download",
-        override var dataBufferSize: Int = 12582912,
-        override var numberOfListeners: Int = getRuntime().availableProcessors(),
-        override var ipv4: Array<String> = getIpsV4ForCurrentDevice(),
-        override var ipv6: Array<String>? = null,
-        override var deviceName: String = getLocalHost().hostName,
-        override var userName: String = getProperty("user.name"),
-        override var isEncryptionEnabled: Boolean = false,
-        override var maxNumberOfConnections: Int = 15000,
-        override var deviceType: DeviceType = PC,
-        override var maxThreadsForSending: Int = 0,
-): IContext {
+    override var port: Int,
+    override var asyncPort: Int = 0,
+    override var protocol: String,
+    override var appFolderName: String,
+    override var appFolderPath: String,
+    override var downloadFolderPath: String = "${getProperty("user.home")}/Download",
+    override var dataBufferSize: Int = 12582912,
+    override var numberOfListeners: Int = getRuntime().availableProcessors(),
+    override var ipv4: Array<String> = getIpsV4ForCurrentDevice(),
+    override var ipv6: Array<String>? = null,
+    override var deviceName: String = getLocalHost().hostName,
+    override var userName: String = getProperty("user.name"),
+    override var isEncryptionEnabled: Boolean = false,
+    override var maxNumberOfConnections: Int = 15000,
+    override var deviceType: DeviceType = PC,
+    override var maxThreadsForSending: Int = 0,
+) : IContext {
 
     companion object {
         fun readYaml(inputStream: InputStream): HashMap<String, Any> = Yaml().let {
@@ -35,7 +35,7 @@ class ApplicationContext(
         }
 
         fun buildContext(
-                yamlFileData: Map<String, Any>
+            yamlFileData: Map<String, Any>
         ): ApplicationContext {
             val os = getProperty("os.name")
             val appFolderNames = ((yamlFileData["os"] as Map<*, *>)["application-folder"] as Map<*, *>)
@@ -49,7 +49,14 @@ class ApplicationContext(
             val port = defaultProperties["port"] as Int
             val protocol = defaultProperties["protocol"] as String
             val isEncryptionEnabled = defaultProperties["encryption"] as Boolean
-            return ApplicationContext(port, 0, protocol, appFolderName, appFolderPath, isEncryptionEnabled = isEncryptionEnabled)
+            return ApplicationContext(
+                port,
+                0,
+                protocol,
+                appFolderName,
+                appFolderPath,
+                isEncryptionEnabled = isEncryptionEnabled
+            )
         }
     }
 }

@@ -8,7 +8,8 @@ object Ipv4Utils {
     fun getIpsV4ForCurrentDevice(): Array<String> {
         val tempListOfIps = ArrayList<String>()
         val enumerationNetworkInterfaces = getNetworkInterfaces()
-        val regexp = Pattern.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$")
+        val regexp =
+            Pattern.compile("^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\$")
 
         while (enumerationNetworkInterfaces.hasMoreElements()) {
             val inetAddresses = enumerationNetworkInterfaces.nextElement().inetAddresses

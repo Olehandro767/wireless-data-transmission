@@ -5,7 +5,7 @@ import java.net.Socket
 
 class TcpGetFileSystem(
     private val onEnd: ITcpLambda
-): ITcpLambda {
+) : ITcpLambda {
 
     override fun invoke(request: RequestDto<Socket>) {
         TODO("Not yet implemented")

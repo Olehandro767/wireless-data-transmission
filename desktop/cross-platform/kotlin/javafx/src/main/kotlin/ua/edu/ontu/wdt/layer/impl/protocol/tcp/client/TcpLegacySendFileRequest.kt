@@ -36,13 +36,19 @@ class TcpLegacySendFileRequest(
     private val onCancelObserver: IUiGenericObserver<AtomicBoolean>,
     private val onProblemObserver: IUiGenericObserver<String>,
     private val files: Array<out File>,
-): IRequest {
+) : IRequest {
 
-    private fun sendFile(socket: Socket, fileInfo: FileInfoDto, messageSender: TcpMessageSender, messageReader: TcpMessageReader) {
+    private fun sendFile(
+        socket: Socket,
+        fileInfo: FileInfoDto,
+        messageSender: TcpMessageSender,
+        messageReader: TcpMessageReader
+    ) {
         // send file info
         messageSender.sendMessageToRemoteDevice(generateFileInfo(fileInfo))
         val fileLength = fileInfo.entity.length()
-        val bufferSize = if (this.context.dataBufferSize < fileLength) this.context.dataBufferSize else fileLength.toInt()
+        val bufferSize =
+            if (this.context.dataBufferSize < fileLength) this.context.dataBufferSize else fileLength.toInt()
         val buffer = ByteArray(bufferSize)
         val nativeChunkedFileSender = TcpNativeChunkedDataSender(socket, this.ioHandler, messageSender.toOutputStream())
         val fileInputStream = FileInputStream(fileInfo.entity)
@@ -54,12 +60,26 @@ class TcpLegacySendFileRequest(
 
             if (transferredLength >= fileLength) {
                 nativeChunkedFileSender.sendChunkToRemoteDevice(buffer, transferredBytes)
-                this.progressUiObserver.notifyUi(FileProgressDto(fileLength, fileInfo.entity.name, fileInfo.entity.path, 100))
+                this.progressUiObserver.notifyUi(
+                    FileProgressDto(
+                        fileLength,
+                        fileInfo.entity.name,
+                        fileInfo.entity.path,
+                        100
+                    )
+                )
                 break
             }
 
             nativeChunkedFileSender.sendChunkToRemoteDevice(buffer, transferredBytes)
-            this.progressUiObserver.notifyUi(FileProgressDto(fileLength, fileInfo.entity.name, fileInfo.entity.path, ((transferredLength / fileLength) * 100).toByte()))
+            this.progressUiObserver.notifyUi(
+                FileProgressDto(
+                    fileLength,
+                    fileInfo.entity.name,
+                    fileInfo.entity.path,
+                    ((transferredLength / fileLength) * 100).toByte()
+                )
+            )
         }
 
         // confirm
@@ -76,7 +96,8 @@ class TcpLegacySendFileRequest(
                 val splitFilesAndFolders = separateFilesAndFolders(*this.files)
                 val infoWithToken = parseToFileRequestInfoDto(generateFilesInfoWithToken(splitFilesAndFolders))
                 // send info to remote device about files and folders
-                messageSender.prepareMessage(prepareRequestType(SEND_FILES_OR_FOLDERS)).prepareMessage(infoWithToken.rawString)
+                messageSender.prepareMessage(prepareRequestType(SEND_FILES_OR_FOLDERS))
+                    .prepareMessage(infoWithToken.rawString)
                     .sendToRemoteDevice()
                 this.logger.info("Send File: Wait on response...")
 

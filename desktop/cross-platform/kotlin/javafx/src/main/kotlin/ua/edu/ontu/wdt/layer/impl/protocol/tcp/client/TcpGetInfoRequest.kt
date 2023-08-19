@@ -11,9 +11,9 @@ import ua.edu.ontu.wdt.layer.utils.RequestUtils.prepareRequestType
 import java.net.Socket
 
 class TcpGetInfoRequest(
-        private val context: IContext,
-        private val messageHandler: IIOSecurityHandler,
-): IGetInfoRequest {
+    private val context: IContext,
+    private val messageHandler: IIOSecurityHandler,
+) : IGetInfoRequest {
 
     override fun doRequest(ip: String): GetInfoDto {
         val socket = Socket(ip, context.port)

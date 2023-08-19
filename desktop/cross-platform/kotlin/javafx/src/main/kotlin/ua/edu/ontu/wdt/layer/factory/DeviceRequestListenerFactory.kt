@@ -13,18 +13,20 @@ import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 object DeviceRequestListenerFactory {
 
     fun createDeviceListener(
-            context: IContext,
-            uiObserverAndMessageConfigurationImpl: IUiObserverAndMessageConfiguration = EmptyUiObserverAndMessageConfigurationImpl(),
-            logger: ILog = EmptyLogger()
+        context: IContext,
+        uiObserverAndMessageConfigurationImpl: IUiObserverAndMessageConfiguration = EmptyUiObserverAndMessageConfigurationImpl(),
+        logger: ILog = EmptyLogger()
     ): IDeviceRequestListener {
-        val messageHandler = if (context.isEncryptionEnabled) SecureRequestResponseHandle() else UnsecureRequestResponseHandler()
-        return when(context.protocol) {
+        val messageHandler =
+            if (context.isEncryptionEnabled) SecureRequestResponseHandle() else UnsecureRequestResponseHandler()
+        return when (context.protocol) {
             "tcp" -> TcpDeviceRequestListener(
                 messageHandler,
                 context,
                 uiObserverAndMessageConfigurationImpl,
                 logger = logger
             )
+
             else -> throw IllegalArgumentException()
         }
     }

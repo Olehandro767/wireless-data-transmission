@@ -4,7 +4,7 @@ import ua.edu.ontu.wdt.layer.ui.IUiGenericConfirmMessage
 import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver
 import ua.edu.ontu.wdt.layer.ui.IUiObserver
 
-class EmptyUiObserver<T>: IUiGenericObserver<T>, IUiGenericConfirmMessage<T>, IUiObserver {
+class EmptyUiObserver<T> : IUiGenericObserver<T>, IUiGenericConfirmMessage<T>, IUiObserver {
 
     override fun notifyUi(dto: T) {
         // empty observer

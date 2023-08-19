@@ -10,27 +10,16 @@ import ua.edu.ontu.wdt.layer.impl.log.EmptyLogger
 import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 
 class TcpDeviceRequestFactory(
-        private val context: IContext,
-        private val messageHandler: IIOSecurityHandler,
-        private val uiObserverConfiguration: IUiObserverAndMessageConfiguration,
-        private val logger: ILog = EmptyLogger(),
-): IDeviceRequestFactory {
+    private val context: IContext,
+    private val messageHandler: IIOSecurityHandler,
+    private val uiObserverConfiguration: IUiObserverAndMessageConfiguration,
+    private val logger: ILog = EmptyLogger(),
+) : IDeviceRequestFactory {
 
-    override fun createGetInfoRequestBuilder(): IGetInfoRequest = TcpGetInfoRequest(this.context, this.messageHandler,)
+    override fun createGetInfoRequestBuilder(): IGetInfoRequest = TcpGetInfoRequest(this.context, this.messageHandler)
 
     override fun createSendFileRequestBuilder(): ISendFileRequestBuilder = if (this.context.maxThreadsForSending <= 1)
         TcpLegacySendFileRequestBuilder(
-                this.logger,
-                this.context,
-                this.messageHandler,
-                this.createGetInfoRequestBuilder(),
-                this.uiObserverConfiguration.createBeforeSendCommonObserver(),
-                this.uiObserverConfiguration.createProgressObserverForSendFileRule(),
-                this.uiObserverConfiguration.createFinishObserverForSendFileRule(),
-                this.uiObserverConfiguration.createCancelObserverForSendFileRule(),
-                this.uiObserverConfiguration.createProblemObserverForSendFileRule()
-        )
-    else TcpMultiSendFileRequestBuilder(
             this.logger,
             this.context,
             this.messageHandler,
@@ -39,6 +28,17 @@ class TcpDeviceRequestFactory(
             this.uiObserverConfiguration.createProgressObserverForSendFileRule(),
             this.uiObserverConfiguration.createFinishObserverForSendFileRule(),
             this.uiObserverConfiguration.createCancelObserverForSendFileRule(),
-            this.uiObserverConfiguration.createProblemObserverForSendFileRule(),
+            this.uiObserverConfiguration.createProblemObserverForSendFileRule()
+        )
+    else TcpMultiSendFileRequestBuilder(
+        this.logger,
+        this.context,
+        this.messageHandler,
+        this.createGetInfoRequestBuilder(),
+        this.uiObserverConfiguration.createBeforeSendCommonObserver(),
+        this.uiObserverConfiguration.createProgressObserverForSendFileRule(),
+        this.uiObserverConfiguration.createFinishObserverForSendFileRule(),
+        this.uiObserverConfiguration.createCancelObserverForSendFileRule(),
+        this.uiObserverConfiguration.createProblemObserverForSendFileRule(),
     )
 }

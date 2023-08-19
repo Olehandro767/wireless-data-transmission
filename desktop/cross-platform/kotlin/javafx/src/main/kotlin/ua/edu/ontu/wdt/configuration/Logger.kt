@@ -6,7 +6,7 @@ import ua.edu.ontu.wdt.layer.ILog
 class Logger<T>(
     type: Class<T>? = null,
     name: String? = null,
-): ILog {
+) : ILog {
 
     private val log = getLogger(type ?: (name ?: throw IllegalAccessException("Fill args")))
 

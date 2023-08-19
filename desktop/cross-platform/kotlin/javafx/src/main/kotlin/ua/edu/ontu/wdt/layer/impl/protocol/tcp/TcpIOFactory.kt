@@ -9,17 +9,26 @@ import java.net.Socket
 @Deprecated("Use native TcpMessageReader / Sender constructor")
 object TcpIOFactory {
 
-    @Deprecated("use another createMessagesReader", ReplaceWith("DataInputStream(BufferedInputStream(socket.getInputStream()))", "java.io.DataInputStream", "java.io.BufferedInputStream"))
-    fun createMessagesReader(socket: Socket): DataInputStream
-            = DataInputStream(BufferedInputStream(socket.getInputStream()))
+    @Deprecated(
+        "use another createMessagesReader",
+        ReplaceWith(
+            "DataInputStream(BufferedInputStream(socket.getInputStream()))",
+            "java.io.DataInputStream",
+            "java.io.BufferedInputStream"
+        )
+    )
+    fun createMessagesReader(socket: Socket): DataInputStream =
+        DataInputStream(BufferedInputStream(socket.getInputStream()))
 
-    @Deprecated("use another createMessageSender", ReplaceWith("DataOutputStream(socket.getOutputStream())", "java.io.DataOutputStream"))
-    fun createMessageSender(socket: Socket): DataOutputStream
-            = DataOutputStream(socket.getOutputStream())
+    @Deprecated(
+        "use another createMessageSender",
+        ReplaceWith("DataOutputStream(socket.getOutputStream())", "java.io.DataOutputStream")
+    )
+    fun createMessageSender(socket: Socket): DataOutputStream = DataOutputStream(socket.getOutputStream())
 
-    fun createMessagesReader(socket: Socket, ioHandler: IIOSecurityHandler): TcpMessageReader
-            = TcpMessageReader(socket, ioHandler)
+    fun createMessagesReader(socket: Socket, ioHandler: IIOSecurityHandler): TcpMessageReader =
+        TcpMessageReader(socket, ioHandler)
 
-    fun createMessageSender(socket: Socket, ioHandler: IIOSecurityHandler): TcpMessageSender
-            = TcpMessageSender(socket, ioHandler)
+    fun createMessageSender(socket: Socket, ioHandler: IIOSecurityHandler): TcpMessageSender =
+        TcpMessageSender(socket, ioHandler)
 }

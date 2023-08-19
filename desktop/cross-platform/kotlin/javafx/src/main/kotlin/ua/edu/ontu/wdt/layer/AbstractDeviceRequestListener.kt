@@ -10,13 +10,13 @@ import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.STOP
 import ua.edu.ontu.wdt.layer.client.RequestDto
 import java.util.concurrent.atomic.AtomicBoolean
 
-abstract class AbstractDeviceRequestListener<T, C,>(
-        private val logger: ILog,
-        private val getInfo: (RequestDto<C>) -> Unit,
-        private val getClipboard: (RequestDto<C>) -> Unit,
-        private val sendClipboard: (RequestDto<C>) -> Unit,
-        private val getFileSystem: (RequestDto<C>) -> Unit,
-        private val acceptFileOrFolder: (RequestDto<C>) -> Unit,
+abstract class AbstractDeviceRequestListener<T, C>(
+    private val logger: ILog,
+    private val getInfo: (RequestDto<C>) -> Unit,
+    private val getClipboard: (RequestDto<C>) -> Unit,
+    private val sendClipboard: (RequestDto<C>) -> Unit,
+    private val getFileSystem: (RequestDto<C>) -> Unit,
+    private val acceptFileOrFolder: (RequestDto<C>) -> Unit,
 ) : IDeviceRequestListener {
 
     abstract fun initListener(): T // example: get server socket
@@ -42,18 +42,23 @@ abstract class AbstractDeviceRequestListener<T, C,>(
             GET_INFO -> {
                 this.getInfo(request)
             }
+
             SEND_FILES_OR_FOLDERS -> {
                 this.acceptFileOrFolder(request)
             }
+
             GET_CLIPBOARD -> {
                 this.getClipboard(request)
             }
+
             SEND_CLIPBOARD -> {
                 this.sendClipboard(request)
             }
+
             GET_FILE_SYSTEM -> {
                 this.getFileSystem(request)
             }
+
             STOP -> {
                 if (this.validateBeforeStop(request)) {
                     isRun.set(false)

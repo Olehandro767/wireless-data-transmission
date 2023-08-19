@@ -14,16 +14,16 @@ import java.io.File
 import java.util.concurrent.atomic.AtomicBoolean
 
 class TcpLegacySendFileRequestBuilder(
-        private val logger: ILog,
-        private val context: IContext,
-        private val messageHandler: IIOSecurityHandler,
-        private val getInfoConfiguration: IGetInfoRequest,
-        private val onStartObserver: IUiGenericObserver<GetInfoDto>,
-        private val progressUiObserver: IUiGenericObserver<FileProgressDto>,
-        private val onFinishObserver: IUiObserver,
-        private val onCancelObserver: IUiGenericObserver<AtomicBoolean>,
-        private val onProblemObserver: IUiGenericObserver<String>,
-): ISendFileRequestBuilder {
+    private val logger: ILog,
+    private val context: IContext,
+    private val messageHandler: IIOSecurityHandler,
+    private val getInfoConfiguration: IGetInfoRequest,
+    private val onStartObserver: IUiGenericObserver<GetInfoDto>,
+    private val progressUiObserver: IUiGenericObserver<FileProgressDto>,
+    private val onFinishObserver: IUiObserver,
+    private val onCancelObserver: IUiGenericObserver<AtomicBoolean>,
+    private val onProblemObserver: IUiGenericObserver<String>,
+) : ISendFileRequestBuilder {
 
     lateinit var ip: String
     lateinit var files: Array<out File>
@@ -43,16 +43,16 @@ class TcpLegacySendFileRequestBuilder(
     }
 
     override fun build(): IRequest = TcpLegacySendFileRequest(
-            this.ip,
-            this.logger,
-            this.context,
-            this.messageHandler,
-            this.getInfoConfiguration,
-            this.onStartObserver,
-            this.progressUiObserver,
-            this.onFinishObserver,
-            this.onCancelObserver,
-            this.onProblemObserver,
-            this.files
+        this.ip,
+        this.logger,
+        this.context,
+        this.messageHandler,
+        this.getInfoConfiguration,
+        this.onStartObserver,
+        this.progressUiObserver,
+        this.onFinishObserver,
+        this.onCancelObserver,
+        this.onProblemObserver,
+        this.files
     )
 }

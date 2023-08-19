@@ -15,7 +15,7 @@ class Main : Application() {
     override fun start(stage: Stage) {
         val fxmlLoader = FXMLLoader(Main::class.java.classLoader.getResource("main.fxml"))
         val screen = Toolkit.getDefaultToolkit().screenSize
-        val scene = Scene(fxmlLoader.load(), screen.width / 3.0 , screen.height / 3.0)
+        val scene = Scene(fxmlLoader.load(), screen.width / 3.0, screen.height / 3.0)
         stage.title = "Wireless data transmission"
         stage.scene = scene
         stage.icons.add(Image(Main::class.java.classLoader.getResourceAsStream("logo.png")))

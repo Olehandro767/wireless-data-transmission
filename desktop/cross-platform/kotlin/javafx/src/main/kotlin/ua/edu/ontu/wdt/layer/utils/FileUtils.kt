@@ -20,22 +20,22 @@ object FileUtils {
     }
 
     fun iterateThroughTheFolderRecursively(
-            onDirectory: (folder: File, rootFolder: File?) -> Unit,
-            onFile: (file: File, folder: File?) -> Unit,
-            rootFolder: File? = null,
-            vararg folderItems: File,
+        onDirectory: (folder: File, rootFolder: File?) -> Unit,
+        onFile: (file: File, folder: File?) -> Unit,
+        rootFolder: File? = null,
+        vararg folderItems: File,
     ) {
         iterateOverFiles(
-                onDirectory = {
-                    val fileList = it.listFiles()
+            onDirectory = {
+                val fileList = it.listFiles()
 
-                    if (fileList != null) {
-                        onDirectory(it, rootFolder)
-                        iterateThroughTheFolderRecursively(onDirectory, onFile, rootFolder, *fileList)
-                    }
-                },
-                onFile = { onFile(it, rootFolder) },
-                *folderItems
+                if (fileList != null) {
+                    onDirectory(it, rootFolder)
+                    iterateThroughTheFolderRecursively(onDirectory, onFile, rootFolder, *fileList)
+                }
+            },
+            onFile = { onFile(it, rootFolder) },
+            *folderItems
         )
     }
 
@@ -44,32 +44,32 @@ object FileUtils {
         val folders = ArrayList<FileInfoDto>()
 
         iterateOverFiles(
-                onDirectory = {
-                    val fileList = it.listFiles()
+            onDirectory = {
+                val fileList = it.listFiles()
 
-                    if (fileList != null) {
-                        folders.add(FileInfoDto(it))
-                        iterateThroughTheFolderRecursively(
-                                onDirectory = { folder, rootFolder ->  folders.add(FileInfoDto(folder, rootFolder)) },
-                                onFile = { file, rootFolder -> files.add(FileInfoDto(file, rootFolder)) },
-                                it,
-                                *fileList
-                        )
-                    }
-                },
-                onFile = { files.add(FileInfoDto(it)) },
-                *args
+                if (fileList != null) {
+                    folders.add(FileInfoDto(it))
+                    iterateThroughTheFolderRecursively(
+                        onDirectory = { folder, rootFolder -> folders.add(FileInfoDto(folder, rootFolder)) },
+                        onFile = { file, rootFolder -> files.add(FileInfoDto(file, rootFolder)) },
+                        it,
+                        *fileList
+                    )
+                }
+            },
+            onFile = { files.add(FileInfoDto(it)) },
+            *args
         )
 
         return SplitFilesAndFoldersDto(files.toTypedArray(), folders.toTypedArray())
     }
 
-    fun generateFileInfo(fileInfo: FileInfoDto): String
-            = "${fileInfo.getPathFromRootFolderOrGetEntityName()},${fileInfo.entity.length()}"
+    fun generateFileInfo(fileInfo: FileInfoDto): String =
+        "${fileInfo.getPathFromRootFolderOrGetEntityName()},${fileInfo.entity.length()}"
 
-    fun generateFilesInfoWithToken(splitFilesAndFolders: SplitFilesAndFoldersDto): String
-            = "${splitFilesAndFolders.files.size}${FILE_DELIMITER}${splitFilesAndFolders.folders.size},${randomUUID()}" +
-            if (splitFilesAndFolders.consistsOfOneFileOrFolder()) ",${splitFilesAndFolders.getTitleIfFileOrFolderIsSingle()}" else ""
+    fun generateFilesInfoWithToken(splitFilesAndFolders: SplitFilesAndFoldersDto): String =
+        "${splitFilesAndFolders.files.size}${FILE_DELIMITER}${splitFilesAndFolders.folders.size},${randomUUID()}" +
+                if (splitFilesAndFolders.consistsOfOneFileOrFolder()) ",${splitFilesAndFolders.getTitleIfFileOrFolderIsSingle()}" else ""
 
     fun parseToFileRequestInfoDto(requestString: String): FileRequestInfoDto {
         val splitRequest = requestString.split(",")
@@ -77,14 +77,14 @@ object FileUtils {
         val filesNumber = filesAndFoldersInfo[0].toInt()
         val folderNumber = filesAndFoldersInfo[1].toInt()
         return FileRequestInfoDto(
-                requestString,
-                filesNumber,
-                folderNumber,
-                splitRequest[1],
-                if ((filesNumber + folderNumber) == 1)
-                    splitRequest[2]
-                else
-                    null
+            requestString,
+            filesNumber,
+            folderNumber,
+            splitRequest[1],
+            if ((filesNumber + folderNumber) == 1)
+                splitRequest[2]
+            else
+                null
         )
     }
 }
