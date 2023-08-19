@@ -1,0 +1,35 @@
+#sb_button {
+    -fx-background-color: #1d3947;
+}
+
+#sb_button:hover {
+    -fx-background-color: #1d3947ef;
+}
+
+#get_c_button {
+    -fx-background-color: #455761;
+}
+
+#get_c_button:hover {
+    -fx-background-color: #455761ef;
+}
+
+
+#main_progress_bar .bar {
+    -fx-background-insets: 0, 0, 0;
+}
+
+.main_button {
+    -fx-background-radius: 0px;
+}
+
+.btn {
+    -fx-background-color: #fff;
+    -fx-background-radius: 5px;
+    -fx-text-fill: #000;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+}
+
+.btn:hover {
+    -fx-background-color: rgb(236, 236, 236);
+}

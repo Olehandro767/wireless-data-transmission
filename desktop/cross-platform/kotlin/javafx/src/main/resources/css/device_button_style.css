@@ -1,0 +1,8 @@
+#device_button {
+    -fx-background-color: #fff;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 10, 0, 0, 3);
+}
+
+#device_button:hover {
+    -fx-background-color: #ffffffef;
+}

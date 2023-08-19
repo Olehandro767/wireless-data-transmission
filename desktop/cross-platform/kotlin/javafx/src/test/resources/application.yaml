@@ -7,5 +7,6 @@ os:
 
 default-properties:
   port: 4000
+  available-ports: 55000-59000
   protocol: tcp
   encryption: false
