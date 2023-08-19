@@ -7,7 +7,7 @@ class ArrayUtilsTest {
 
     @Test
     fun test() {
-        val array = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10,)
+        val array = listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
         val result1 = ArrayUtils.splitArrayWithConsideration(array, 1)
         val result2 = ArrayUtils.splitArrayWithConsideration(array, 2)
         val result3 = ArrayUtils.splitArrayWithConsideration(array, 4)

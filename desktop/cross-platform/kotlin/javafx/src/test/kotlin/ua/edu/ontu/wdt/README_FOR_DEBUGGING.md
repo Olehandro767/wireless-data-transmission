@@ -1,5 +1,6 @@
 For debugging replace KOTLIN part to:
 <!-- Kotlin -->
+
         <!-- Kotlin -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -17,6 +18,7 @@ For debugging replace KOTLIN part to:
         <!--     <artifactId>kotlinx-coroutines-core-jvm</artifactId>-->
         <!--     <version>${kotlinx-coroutines-core.version}</version>-->
         <!-- </dependency>-->
+
 <!-- Kotlin -->
 
 [//]: # (https://en.wikipedia.org/wiki/ANSI_escape_code)

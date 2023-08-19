@@ -12,13 +12,17 @@ class ApplicationContexTest {
 
     @Test
     fun test() {
-        StdLogger().let { log -> run {
-            buildContext(readYaml(FileInputStream("./src/test/resources/application.yaml"))).let { run {
-                assertEquals(4000, it.port)
-                assertEquals("tcp", it.protocol)
-                assertFalse(it.isEncryptionEnabled)
-                log.debug("app folder: ${it.appFolderPath}")
-            } }
-        } }
+        StdLogger().let { log ->
+            run {
+                buildContext(readYaml(FileInputStream("./src/test/resources/application.yaml"))).let {
+                    run {
+                        assertEquals(4000, it.port)
+                        assertEquals("tcp", it.protocol)
+                        assertFalse(it.isEncryptionEnabled)
+                        log.debug("app folder: ${it.appFolderPath}")
+                    }
+                }
+            }
+        }
     }
 }

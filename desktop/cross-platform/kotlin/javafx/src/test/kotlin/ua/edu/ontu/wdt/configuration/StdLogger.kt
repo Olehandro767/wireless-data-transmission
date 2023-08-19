@@ -2,7 +2,7 @@ package ua.edu.ontu.wdt.configuration
 
 import ua.edu.ontu.wdt.layer.ILog
 
-class StdLogger: ILog { // for tests
+class StdLogger : ILog { // for tests
 
     override fun warn(msg: String) {
         println(msg)

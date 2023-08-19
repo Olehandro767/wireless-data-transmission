@@ -29,12 +29,16 @@ object FileTestUtils {
 
         testFolder.mkdirs()
         arrayOf(
-            TestFileDto("$testFolderPath/dir1", arrayOf(
-                TestFileDto("$testFolderPath/dir1/f1.txt", null, "test file 1"),
-                TestFileDto("$testFolderPath/dir1/in_dir", arrayOf(
-                    TestFileDto("$testFolderPath/dir1/in_dir/in_file.txt", null, "in file")
-                )),
-            )),
+            TestFileDto(
+                "$testFolderPath/dir1", arrayOf(
+                    TestFileDto("$testFolderPath/dir1/f1.txt", null, "test file 1"),
+                    TestFileDto(
+                        "$testFolderPath/dir1/in_dir", arrayOf(
+                            TestFileDto("$testFolderPath/dir1/in_dir/in_file.txt", null, "in file")
+                        )
+                    ),
+                )
+            ),
             TestFileDto("$testFolderPath/file1.txt", null, "test file 2"),
             TestFileDto("$testFolderPath/dir2", emptyArray()),
         ).forEach { doTask(it) }

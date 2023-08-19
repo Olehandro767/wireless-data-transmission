@@ -11,8 +11,8 @@ class FileTestUtilsTest {
     fun separateFilesAndFolders() {
         FileTestUtils.createTestFiles()
         val dto = FileUtils.separateFilesAndFolders(
-                File("./test_folder/dir1"),
-                File("./test_folder/file1.txt")
+            File("./test_folder/dir1"),
+            File("./test_folder/file1.txt")
         )
 
         assertEquals(2, dto.folders.size)
