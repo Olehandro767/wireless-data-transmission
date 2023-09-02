@@ -1,6 +1,6 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
-import kotlinx.coroutines.*
+import ua.edu.ontu.wdt.layer.IAsyncConfiguration
 import ua.edu.ontu.wdt.layer.IContext
 import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
@@ -24,6 +24,7 @@ class TcpMultiAcceptFileService(
     // TODO
     private val logger: ILog,
     private val context: IContext,
+    private val asyncConfiguration: IAsyncConfiguration,
     private val onEnd: ITcpLambda,
     private val messageHandler: IIOSecurityHandler,
     private val confirmFileMessage: IUiGenericConfirmMessage<ConfirmFileDto>,
@@ -33,7 +34,6 @@ class TcpMultiAcceptFileService(
     private val onProblemObserver: IUiGenericObserver<String>,
 ) : ITcpLambda {
 
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private fun acceptFile(messageReader: DataInputStream, acceptedFilesValue: AtomicInteger) {
         acceptedFilesValue.set(acceptedFilesValue.get() + 1)
@@ -57,27 +57,21 @@ class TcpMultiAcceptFileService(
                 fileOutputStream.write(buffer, 0, readDataSize)
                 this.progressUiObserver.notifyUi(
                     FileProgressDto(
-                        fileLength,
-                        file.name,
-                        file.absolutePath,
-                        ((fileAcceptedLength / fileLength) * 100).toByte()
+                        fileLength, file.name, file.absolutePath, ((fileAcceptedLength / fileLength) * 100).toByte()
                     )
                 )
             }
         }
     }
 
-    private suspend fun newConnection(
-        socket: Socket,
-        infoWithToken: String,
-        acceptedFilesValue: AtomicInteger,
-        isRunning: AtomicBoolean
+    private fun newConnection(
+        socket: Socket, infoWithToken: String, acceptedFilesValue: AtomicInteger, isRunning: AtomicBoolean
     ) {
-        withContext(this.ioDispatcher) {
+        this.asyncConfiguration.runAsync {
             val messageSender = TcpIOFactory.createMessageSender(socket)
             val messageReader = TcpIOFactory.createMessagesReader(socket)
             // send token
-            messageSender.writeUTF(messageHandler.handleMessageBeforeSend(infoWithToken))
+            messageSender.writeUTF(this.messageHandler.handleMessageBeforeSend(infoWithToken))
             messageSender.flush()
 
             if (messageReader.readBoolean()) {
@@ -85,17 +79,17 @@ class TcpMultiAcceptFileService(
                     acceptFile(messageReader, acceptedFilesValue)
                 }
             } else {
-                logger.error("Wrong token")
+                this.logger.error("Wrong token")
             }
 
             socket.close()
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun invoke(request: RequestDto<Socket>) {
-        val recipientInfo = DeviceRequestAbstractFactory.createDeviceRequestFactory(this.context)
-            .createGetInfoRequestBuilder().doRequest(request.context.inetAddress.hostAddress)
+        val recipientInfo =
+            DeviceRequestAbstractFactory.createDeviceRequestFactory(this.context, this.asyncConfiguration)
+                .createGetInfoRequestBuilder().doRequest(request.context.inetAddress.hostAddress)
         this.onStartObserver.notifyUi(recipientInfo)
         val acceptedFiles = AtomicInteger(0)
         val messageSender = TcpIOFactory.createMessageSender(request.context)
@@ -105,60 +99,53 @@ class TcpMultiAcceptFileService(
         val isSingletonFile = !parsedFileInfo[2].contains(FILE_DELIMITER)
         val numberOfFiles = if (isSingletonFile) 0 else parsedFileInfo[2].split(FILE_DELIMITER)[0].toInt()
         val numberOfFolders = if (isSingletonFile) 0 else parsedFileInfo[2].split(FILE_DELIMITER)[1].toInt()
-        this.confirmFileMessage.ask(
-            ConfirmFileDto(
-                recipientInfo,
+        this.confirmFileMessage.ask(ConfirmFileDto(
+            recipientInfo,
 //                        parsedFileInfo[1].toInt(),
-                numberOfFiles,
-                numberOfFolders,
+            numberOfFiles, numberOfFolders,
 //                        isSingletonFile,
-                if (isSingletonFile) parsedFileInfo[2] else null
-            ),
-            onAccept = {
-                logger.info("Accepted request")
-                val isRunning = AtomicBoolean(true)
-                messageSender.writeBoolean(true)
-                messageSender.flush()
-                this.onCancelObserver.notifyUi(isRunning)
-                Socket(recipientInfo.ip, this.context.asyncPort).let {
-                    val socketMessageSender = TcpIOFactory.createMessageSender(it)
-                    val socketMessageReader = TcpIOFactory.createMessagesReader(it)
+            if (isSingletonFile) parsedFileInfo[2] else null
+        ), onAccept = {
+            logger.info("Accepted request")
+            val isRunning = AtomicBoolean(true)
+            messageSender.writeBoolean(true)
+            messageSender.flush()
+            this.onCancelObserver.notifyUi(isRunning)
+            Socket(recipientInfo.ip, this.context.asyncPort).let {
+                val socketMessageSender = TcpIOFactory.createMessageSender(it)
+                val socketMessageReader = TcpIOFactory.createMessagesReader(it)
 
-                    // send token
-                    socketMessageSender.writeUTF(this.messageHandler.handleMessageBeforeSend(infoWithToken))
-                    socketMessageSender.flush()
-                    // check on correct token
-                    if (socketMessageReader.readBoolean()) {
-                        while (socketMessageReader.readBoolean()) {
-                            val folderPath = socketMessageReader.readUTF()
-                            File("${this.context.downloadFolderPath}/${folderPath}").mkdirs()
-                        }
-                    } else {
-                        this.onEnd(request)
-                        return@let
+                // send token
+                socketMessageSender.writeUTF(this.messageHandler.handleMessageBeforeSend(infoWithToken))
+                socketMessageSender.flush()
+                // check on correct token
+                if (socketMessageReader.readBoolean()) {
+                    while (socketMessageReader.readBoolean()) {
+                        val folderPath = socketMessageReader.readUTF()
+                        File("${this.context.downloadFolderPath}/${folderPath}").mkdirs()
                     }
-
-                    socketMessageSender.writeBoolean(true)
-                    socketMessageSender.flush()
-                    it.close()
+                } else {
+                    this.onEnd(request)
+                    return@let
                 }
 
-                for (ignore in 0 until messageReader.readInt()) {
-                    Socket(recipientInfo.ip, this.context.asyncPort).let {
-                        GlobalScope.launch {
-                            newConnection(it, infoWithToken, acceptedFiles, isRunning)
-                        }
-                    }
-                }
-
-                this.onEnd(request)
-            },
-            onCancel = {
-                logger.info("Canceled request")
-                messageSender.writeBoolean(false)
-                messageSender.flush()
-                this.onEnd(request)
+                socketMessageSender.writeBoolean(true)
+                socketMessageSender.flush()
+                it.close()
             }
-        )
+
+            for (ignore in 0 until messageReader.readInt()) {
+                Socket(recipientInfo.ip, this.context.asyncPort).let {
+                    this.newConnection(it, infoWithToken, acceptedFiles, isRunning)
+                }
+            }
+
+            this.onEnd(request)
+        }, onCancel = {
+            logger.info("Canceled request")
+            messageSender.writeBoolean(false)
+            messageSender.flush()
+            this.onEnd(request)
+        })
     }
 }

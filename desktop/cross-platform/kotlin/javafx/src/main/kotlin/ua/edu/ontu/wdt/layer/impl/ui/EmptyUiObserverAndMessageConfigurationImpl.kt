@@ -1,6 +1,5 @@
 package ua.edu.ontu.wdt.layer.impl.ui
 
-import ua.edu.ontu.wdt.EmptyUiObserver
 import ua.edu.ontu.wdt.layer.dto.GetInfoDto
 import ua.edu.ontu.wdt.layer.dto.file.ConfirmFileDto
 import ua.edu.ontu.wdt.layer.dto.file.FileProgressDto
@@ -23,4 +22,10 @@ class EmptyUiObserverAndMessageConfigurationImpl : IUiObserverAndMessageConfigur
     override fun createConfirmFileMessage(): IUiGenericConfirmMessage<ConfirmFileDto> = EmptyUiObserver()
 
     override fun createBeforeSendCommonObserver(): IUiGenericObserver<GetInfoDto> = EmptyUiObserver()
+
+    override fun createCancelObserver(): IUiGenericObserver<AtomicBoolean> = EmptyUiObserver()
+
+    override fun createUiProgressObserver(): IUiGenericObserver<Byte> = EmptyUiObserver()
+
+    override fun createUiNewDeviceInfoObserver(): IUiGenericObserver<GetInfoDto> = EmptyUiObserver()
 }

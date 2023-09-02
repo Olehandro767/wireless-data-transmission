@@ -12,6 +12,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class AbstractDeviceRequestListener<T, C>(
     private val logger: ILog,
+    private val asyncConfiguration: IAsyncConfiguration,
     private val getInfo: (RequestDto<C>) -> Unit,
     private val getClipboard: (RequestDto<C>) -> Unit,
     private val sendClipboard: (RequestDto<C>) -> Unit,
@@ -25,13 +26,15 @@ abstract class AbstractDeviceRequestListener<T, C>(
 
     abstract fun createContext(listener: T): C // example: get accepted client
 
-    abstract suspend fun handleRequestAsync(isRun: AtomicBoolean, context: C) // example: accept file
+    abstract fun handleRequestAsync(isRun: AtomicBoolean, context: C) // example: accept file
 
     abstract fun validateBeforeStop(request: RequestDto<C>): Boolean
 
-    suspend fun threadLoop(isRun: AtomicBoolean, listener: T) {
-        while (isRun.get()) {
-            this.handleRequestAsync(isRun, this.createContext(listener))
+    fun threadLoop(isRun: AtomicBoolean, listener: T) {
+        this.asyncConfiguration.runIOOperationAsync {
+            while (isRun.get()) {
+                this.handleRequestAsync(isRun, this.createContext(listener))
+            }
         }
     }
 

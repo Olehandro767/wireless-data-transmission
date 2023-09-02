@@ -1,7 +1,7 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
-import kotlinx.coroutines.*
 import ua.edu.ontu.wdt.layer.AbstractDeviceRequestListener
+import ua.edu.ontu.wdt.layer.IAsyncConfiguration
 import ua.edu.ontu.wdt.layer.IContext
 import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
@@ -18,6 +18,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class TcpDeviceRequestListener(
     handler: IIOSecurityHandler,
     private val context: IContext,
+    asyncConfiguration: IAsyncConfiguration,
     uiObserverConfiguration: IUiObserverAndMessageConfiguration,
     messageHandler: IIOSecurityHandler = UnsecureRequestResponseHandler(),
     private val semaphore: Semaphore = Semaphore(context.maxNumberOfConnections),
@@ -28,6 +29,7 @@ class TcpDeviceRequestListener(
     },
 ) : AbstractDeviceRequestListener<ServerSocket, Socket>(
     logger,
+    asyncConfiguration,
     TcpGetInfo(handler, context, onEndRule),
     TcpGetClipboard(onEndRule),
     TcpSendClipboard(onEndRule),
@@ -35,6 +37,7 @@ class TcpDeviceRequestListener(
     if (context.maxThreadsForSending <= 1) TcpLegacyAcceptFileService(
         logger,
         context,
+        asyncConfiguration,
         onEndRule,
         messageHandler,
         uiObserverConfiguration.createConfirmFileMessage(),
@@ -45,6 +48,7 @@ class TcpDeviceRequestListener(
     ) else TcpMultiAcceptFileService(
         logger,
         context,
+        asyncConfiguration,
         onEndRule,
         messageHandler,
         uiObserverConfiguration.createConfirmFileMessage(),
@@ -56,19 +60,16 @@ class TcpDeviceRequestListener(
 ) {
 
     var isRun: AtomicBoolean = AtomicBoolean(false)
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     override fun initListener(): ServerSocket = ServerSocket(this.context.port)
 
     override fun validateBeforeStop(request: RequestDto<Socket>): Boolean =
         request.context.inetAddress.hostAddress == "127.0.0.1"
 
-    override suspend fun handleRequestAsync(isRun: AtomicBoolean, context: Socket) {
-        withContext(this.ioDispatcher) {
-            val dataInputStream = TcpIOFactory.createMessagesReader(context)
-            val message = dataInputStream.readUTF()
-            manageRequest(isRun, RequestDto(message, context))
-        }
+    override fun handleRequestAsync(isRun: AtomicBoolean, context: Socket) {
+        val dataInputStream = TcpIOFactory.createMessagesReader(context)
+        val message = dataInputStream.readUTF()
+        manageRequest(isRun, RequestDto(message, context))
     }
 
     override fun createContext(listener: ServerSocket): Socket {
@@ -78,16 +79,13 @@ class TcpDeviceRequestListener(
         return clientSocket
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun launch(isRun: AtomicBoolean, listener: ServerSocket) {
         this.isRun = isRun
         val pointer = this
 
         for (index in 1..context.numberOfListeners) {
             logger.info("Started server thread: #$index")
-            GlobalScope.launch {
-                threadLoop(pointer.isRun, listener)
-            }
+            threadLoop(pointer.isRun, listener)
         }
     }
 

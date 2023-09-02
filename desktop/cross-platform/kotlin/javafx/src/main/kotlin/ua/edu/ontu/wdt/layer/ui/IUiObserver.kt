@@ -1,6 +1,6 @@
 package ua.edu.ontu.wdt.layer.ui
 
-interface IUiObserver {
+fun interface IUiObserver {
 
     fun notifyUi()
 }

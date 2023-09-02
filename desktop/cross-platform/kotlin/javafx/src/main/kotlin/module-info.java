@@ -6,8 +6,9 @@ module ua.edu.ontu.wdt {
     requires org.yaml.snakeyaml;
     requires org.apache.logging.log4j;
 //    requires org.apache.logging.log4j.core;
-    requires kotlinx.coroutines.core;
+//    requires kotlinx.coroutines.core;
 
     opens ua.edu.ontu.wdt.controller to javafx.fxml;
+    opens ua.edu.ontu.wdt.controller.template to javafx.fxml;
     exports ua.edu.ontu.wdt;
 }

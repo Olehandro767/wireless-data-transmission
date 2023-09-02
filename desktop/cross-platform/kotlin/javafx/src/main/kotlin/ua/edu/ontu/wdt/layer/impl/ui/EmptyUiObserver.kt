@@ -1,4 +1,4 @@
-package ua.edu.ontu.wdt
+package ua.edu.ontu.wdt.layer.impl.ui
 
 import ua.edu.ontu.wdt.layer.ui.IUiGenericConfirmMessage
 import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver

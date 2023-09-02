@@ -1,5 +1,6 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
+import ua.edu.ontu.wdt.layer.IAsyncConfiguration
 import ua.edu.ontu.wdt.layer.IContext
 import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
@@ -23,6 +24,7 @@ class TcpLegacyAcceptFileService(
     // single thread
     private val logger: ILog,
     private val context: IContext,
+    private val asyncConfiguration: IAsyncConfiguration,
     private val onEnd: ITcpLambda,
     private val messageHandler: IIOSecurityHandler,
     private val confirmFileMessage: IUiGenericConfirmMessage<ConfirmFileDto>,
@@ -64,8 +66,9 @@ class TcpLegacyAcceptFileService(
     }
 
     override fun invoke(request: RequestDto<Socket>) {
-        val remoteDeviceInfo = DeviceRequestAbstractFactory.createDeviceRequestFactory(context)
-            .createGetInfoRequestBuilder().doRequest(request.context.inetAddress.hostAddress)
+        val remoteDeviceInfo =
+            DeviceRequestAbstractFactory.createDeviceRequestFactory(this.context, this.asyncConfiguration)
+                .createGetInfoRequestBuilder().doRequest(request.context.inetAddress.hostAddress)
         this.onStartObserver.notifyUi(remoteDeviceInfo)
         val messageReader = TcpMessageReader(request.context, this.messageHandler)
         val messageSender = TcpMessageSender(request.context, this.messageHandler)

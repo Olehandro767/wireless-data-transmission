@@ -3,6 +3,7 @@ package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import ua.edu.ontu.wdt.configuration.AsyncConfiguration
 import ua.edu.ontu.wdt.configuration.StdLogger
 import ua.edu.ontu.wdt.configuration.StdUiObserverConfiguration
 import ua.edu.ontu.wdt.layer.factory.DeviceRequestAbstractFactory.createDeviceRequestFactory
@@ -29,9 +30,9 @@ class TcpDeviceRequestListenerTest {
                     run {
                         StdUiObserverConfiguration(log).let { uiConfig ->
                             run {
-                                createDeviceListener(context, uiConfig, log).let {
+                                createDeviceListener(context, AsyncConfiguration(), uiConfig, log).let {
                                     run {
-                                        createDeviceRequestFactory(context, uiConfig, logger = log).let { factory ->
+                                        createDeviceRequestFactory(context, AsyncConfiguration(), uiConfig, logger = log).let { factory ->
                                             run {
                                                 it.serve().let {
                                                     factory.createGetInfoRequestBuilder().doRequest(remoteIpV4).let {

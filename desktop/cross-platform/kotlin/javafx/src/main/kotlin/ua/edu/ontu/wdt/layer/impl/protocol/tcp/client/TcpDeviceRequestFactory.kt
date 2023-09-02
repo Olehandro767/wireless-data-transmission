@@ -1,5 +1,6 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.client
 
+import ua.edu.ontu.wdt.layer.IAsyncConfiguration
 import ua.edu.ontu.wdt.layer.IContext
 import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.client.IDeviceRequestFactory
@@ -11,6 +12,7 @@ import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 
 class TcpDeviceRequestFactory(
     private val context: IContext,
+    private val asyncConfiguration: IAsyncConfiguration,
     private val messageHandler: IIOSecurityHandler,
     private val uiObserverConfiguration: IUiObserverAndMessageConfiguration,
     private val logger: ILog = EmptyLogger(),
@@ -33,6 +35,7 @@ class TcpDeviceRequestFactory(
     else TcpMultiSendFileRequestBuilder(
         this.logger,
         this.context,
+        this.asyncConfiguration,
         this.messageHandler,
         this.createGetInfoRequestBuilder(),
         this.uiObserverConfiguration.createBeforeSendCommonObserver(),

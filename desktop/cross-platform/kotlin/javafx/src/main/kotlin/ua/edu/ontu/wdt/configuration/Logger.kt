@@ -14,7 +14,10 @@ class Logger<T>(
 
     override fun warn(msg: String, exception: Exception) = this.log.warn(msg, exception)
 
-    override fun info(msg: String) = this.log.info(msg)
+    override fun info(msg: String) {
+        this.log.info(msg)
+        println(msg)
+    }
 
     override fun info(msg: String, exception: Exception) = this.log.info(msg, exception)
 

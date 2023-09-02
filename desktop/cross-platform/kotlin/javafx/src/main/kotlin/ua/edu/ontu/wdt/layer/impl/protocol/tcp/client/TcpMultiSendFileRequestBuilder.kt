@@ -1,6 +1,6 @@
 package ua.edu.ontu.wdt.layer.impl.protocol.tcp.client
 
-import kotlinx.coroutines.*
+import ua.edu.ontu.wdt.layer.IAsyncConfiguration
 import ua.edu.ontu.wdt.layer.IContext
 import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener.Companion.SEND_FILES_OR_FOLDERS
@@ -31,6 +31,7 @@ class TcpMultiSendFileRequestBuilder(
     // TODO review
     private val logger: ILog,
     private val context: IContext,
+    private val asyncConfiguration: IAsyncConfiguration,
     private val messageHandler: IIOSecurityHandler,
     private val getInfoConfiguration: IGetInfoRequest,
     private val onStartObserver: IUiGenericObserver<GetInfoDto>,
@@ -41,7 +42,6 @@ class TcpMultiSendFileRequestBuilder(
 ) : ISendFileRequestBuilder {
 
     private val random: Random = Random()
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
 
     private fun countFiles(vararg files: File): Int {
         var size = 0
@@ -123,10 +123,7 @@ class TcpMultiSendFileRequestBuilder(
                 messageSender.flush()
                 this.progressUiObserver.notifyUi(
                     FileProgressDto(
-                        fileLength,
-                        file.name,
-                        file.path,
-                        ((transferredLength / fileLength) * 100).toByte()
+                        fileLength, file.name, file.path, ((transferredLength / fileLength) * 100).toByte()
                     )
                 )
             }
@@ -140,7 +137,7 @@ class TcpMultiSendFileRequestBuilder(
         }
     }
 
-    private suspend fun checkTokenAndSendFile(
+    private fun checkTokenAndSendFile(
         socket: Socket,
         serverSocket: ServerSocket,
         chunk: List<TempFileData>,
@@ -149,12 +146,12 @@ class TcpMultiSendFileRequestBuilder(
         sentFiles: AtomicInteger,
         isRunning: AtomicBoolean,
     ) {
-        withContext(this.ioDispatcher) {
+        this.asyncConfiguration.runAsync {
             val serverMessageSender = TcpIOFactory.createMessageSender(socket)
             val serverMessageReader = TcpIOFactory.createMessagesReader(socket)
 
             // check token
-            if (messageHandler.handleAcceptedMessage(serverMessageReader.readUTF()) == infoWithToken) {
+            if (this.messageHandler.handleAcceptedMessage(serverMessageReader.readUTF()) == infoWithToken) {
                 serverMessageSender.writeBoolean(true)
                 serverMessageSender.writeInt(chunk.size)
                 serverMessageSender.flush()
@@ -172,7 +169,7 @@ class TcpMultiSendFileRequestBuilder(
             } else {
                 serverMessageSender.writeBoolean(false)
                 serverMessageSender.flush()
-                onProblemObserver.notifyUi("token_error")
+                this.onProblemObserver.notifyUi("token_error")
             }
         }
     }
@@ -201,7 +198,6 @@ class TcpMultiSendFileRequestBuilder(
         }
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
     override fun doRequest(ip: String, vararg files: File) {
         val remountDeviceInfo = this.getInfoConfiguration.doRequest(ip)
         this.onStartObserver.notifyUi(remountDeviceInfo)
@@ -238,11 +234,7 @@ class TcpMultiSendFileRequestBuilder(
                         if (item.exists()) {
                             if (item.isDirectory) {
                                 this.prepareFoldersOnClient(
-                                    item,
-                                    item.listFiles(),
-                                    fileArray,
-                                    serverMessageSender,
-                                    item.name
+                                    item, item.listFiles(), fileArray, serverMessageSender, item.name
                                 )
                             } else {
                                 fileArray.add(TempFileData(item))
@@ -278,18 +270,10 @@ class TcpMultiSendFileRequestBuilder(
 
             for (chunk in splitFileArray) {
                 serverSocket.accept().let {
-                    GlobalScope.launch {
-                        checkTokenAndSendFile(
-                            it,
-                            serverSocket,
-                            chunk,
-                            infoWithToken,
-                            numberOfFiles,
-                            sentFiles,
-                            isRunning
-                        )
-                        it.close()
-                    }
+                    this.checkTokenAndSendFile(
+                        it, serverSocket, chunk, infoWithToken, numberOfFiles, sentFiles, isRunning
+                    )
+                    it.close()
                 }
             }
         } else {

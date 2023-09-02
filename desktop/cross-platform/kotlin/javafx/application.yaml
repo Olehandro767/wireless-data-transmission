@@ -1,7 +1,8 @@
+version: 2
+
 os:
-  application-folder:
-    linux: '.wdt'
-    windows: 'WDT'
+  folder-name:
+    localization: "lang"
 
 default-properties:
   port: 4000

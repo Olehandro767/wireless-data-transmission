@@ -13,9 +13,17 @@ interface IUiObserverAndMessageConfiguration {
 
     fun createProblemObserverForSendFileRule(): IUiGenericObserver<String>
 
+    @Deprecated("use more universal")
     fun createCancelObserverForSendFileRule(): IUiGenericObserver<AtomicBoolean>
 
     fun createConfirmFileMessage(): IUiGenericConfirmMessage<ConfirmFileDto>
 
+    @Deprecated("use more universal")
     fun createBeforeSendCommonObserver(): IUiGenericObserver<GetInfoDto>
+
+    fun createCancelObserver(): IUiGenericObserver<AtomicBoolean>
+
+    fun createUiProgressObserver(): IUiGenericObserver<Byte>
+
+    fun createUiNewDeviceInfoObserver(): IUiGenericObserver<GetInfoDto>
 }

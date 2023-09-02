@@ -23,4 +23,8 @@ object ArrayUtils {
 
         return result
     }
+
+    inline fun <reified T> splitArrayWithConsideration(array: Array<T>, maxNumberOfThread: Int): List<Array<T>> {
+        return splitArrayWithConsideration(listOf(*array), maxNumberOfThread).map { it.toTypedArray() }.toList()
+    }
 }
