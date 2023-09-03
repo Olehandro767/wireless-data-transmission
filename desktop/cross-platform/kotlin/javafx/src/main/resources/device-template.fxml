@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
+
+
+<HBox alignment="CENTER_LEFT" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseClicked="#onClick" prefHeight="50.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/20.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <ImageView fx:id="imageView" fitHeight="50.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@phone.png" />
+         </image>
+         <HBox.margin>
+            <Insets right="15.0" />
+         </HBox.margin>
+      </ImageView>
+      <Text fx:id="textArea" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="496.13000106811523" />
+   </children>
+</HBox>

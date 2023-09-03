@@ -20,9 +20,11 @@ import javafx.stage.FileChooser.ExtensionFilter
 import ua.edu.ontu.wdt.configuration.AsyncConfiguration
 import ua.edu.ontu.wdt.configuration.Logger
 import ua.edu.ontu.wdt.configuration.ui.UiObserverAndMessageConfiguration
+import ua.edu.ontu.wdt.controller.template.DeviceTemplateController
 import ua.edu.ontu.wdt.controller.template.FileOrFolderTemplateController
 import ua.edu.ontu.wdt.layer.IDeviceSearcher
 import ua.edu.ontu.wdt.layer.client.IDeviceRequestListener
+import ua.edu.ontu.wdt.layer.factory.DeviceRequestAbstractFactory
 import ua.edu.ontu.wdt.layer.factory.DeviceRequestListenerFactory
 import ua.edu.ontu.wdt.layer.factory.DeviceSearcherFactory
 import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver
@@ -156,6 +158,33 @@ class MainController {
                             runLater {
                                 this.progressBar.progress = maxIndex.toDouble() / 100.0
                             }
+                        }
+                    }
+                    this.uiConfig.onNewDevice = IUiGenericObserver {
+                        runLater {
+                            val fxml = FXMLLoader()
+                            fxml.location = MainController::class.java.classLoader.getResource("device-template.fxml")!!
+                            fxml.setController(DeviceTemplateController(it) { _, deviceInfo ->
+                                runLater {
+                                    this.vBoxForContent.children.clear()
+                                    this.vBoxForContent.alignment = CENTER
+                                    val fileProgressFxml = FXMLLoader()
+                                    fileProgressFxml.location =
+                                        MainController::class.java.classLoader.getResource("file-progress-template.fxml")!!
+                                    this.vBoxForContent.children.add(fileProgressFxml.load())
+                                    asyncConfiguration.runAsync {
+                                        DeviceRequestAbstractFactory.createDeviceRequestFactory(
+                                            this.applicationContext,
+                                            asyncConfiguration,
+                                            this.uiConfig,
+                                            Logger(this.javaClass)
+                                        ).createSendFileRequestBuilder()
+                                            .files(*this.fileAndFolderRememberService.getAllFiles().toTypedArray())
+                                            .ip(deviceInfo.ip).build().doRequest()
+                                    }
+                                }
+                            })
+                            this.vBoxForContent.children.add(fxml.load())
                         }
                     }
                     DeviceSearcherFactory.createDeviceSearcher(

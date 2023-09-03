@@ -20,6 +20,6 @@ class FileOrFolderTemplateController(
     fun initialize() {
         this.textArea.text = text
         this.imageView.image =
-            Image(javaClass.classLoader.getResourceAsStream(if (this.isFolder) "folder.png" else "document.png"))
+            Image(this.javaClass.classLoader.getResourceAsStream(if (this.isFolder) "folder.png" else "document.png"))
     }
 }
