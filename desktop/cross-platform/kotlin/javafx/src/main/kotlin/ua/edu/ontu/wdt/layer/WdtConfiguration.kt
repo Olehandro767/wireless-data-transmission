@@ -1,6 +1,5 @@
 package ua.edu.ontu.wdt.layer
 
-import ua.edu.ontu.wdt.IClipboardConfiguration
 import ua.edu.ontu.wdt.layer.ui.IUiObserverAndMessageConfiguration
 
 data class WdtConfiguration(

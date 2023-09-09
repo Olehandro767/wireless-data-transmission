@@ -6,4 +6,9 @@
     </style>
 
     <style name="Theme.WDT" parent="Base.Theme.WDT" />
+
+    <style name="Theme.WDT.SplashScreen" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/white</item>
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+    </style>
 </resources>
