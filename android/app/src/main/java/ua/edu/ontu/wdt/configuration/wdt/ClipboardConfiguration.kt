@@ -4,6 +4,10 @@ import ua.edu.ontu.wdt.layer.IClipboardConfiguration
 
 class ClipboardConfiguration : IClipboardConfiguration {
 
+    override fun identifyTypeOfData(): String {
+        TODO("Not yet implemented")
+    }
+
     override fun writeText(text: String) {
         TODO("Not yet implemented")
     }

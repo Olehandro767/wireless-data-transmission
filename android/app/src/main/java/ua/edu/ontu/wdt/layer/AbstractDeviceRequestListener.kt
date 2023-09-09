@@ -15,7 +15,7 @@ abstract class AbstractDeviceRequestListener<T, C>(
     private val asyncConfiguration: IAsyncConfiguration,
     private val getInfo: (RequestDto<C>) -> Unit,
     private val getClipboard: (RequestDto<C>) -> Unit,
-    private val sendClipboard: (RequestDto<C>) -> Unit,
+    private val acceptClipboard: (RequestDto<C>) -> Unit,
     private val getFileSystem: (RequestDto<C>) -> Unit,
     private val acceptFileOrFolder: (RequestDto<C>) -> Unit,
 ) : IDeviceRequestListener {
@@ -58,7 +58,7 @@ abstract class AbstractDeviceRequestListener<T, C>(
             }
 
             SEND_CLIPBOARD -> {
-                this.sendClipboard(request)
+                this.acceptClipboard(request)
             }
 
             GET_FILE_SYSTEM -> {

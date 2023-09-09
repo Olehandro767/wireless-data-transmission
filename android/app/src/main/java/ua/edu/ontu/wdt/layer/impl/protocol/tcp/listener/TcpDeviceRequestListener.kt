@@ -27,8 +27,8 @@ class TcpDeviceRequestListener(
     _logger,
     _genericConfiguration.asyncConfiguration,
     TcpGetInfo(handler, _genericConfiguration.context, onEndRule),
-    TcpGetClipboard(onEndRule),
     TcpSendClipboard(onEndRule),
+    TcpAcceptClipboard(_genericConfiguration, messageHandler, onEndRule),
     TcpGetFileSystem(onEndRule),
     if (_genericConfiguration.context.maxThreadsForSending <= 1) TcpLegacyAcceptFileService(
         _logger,

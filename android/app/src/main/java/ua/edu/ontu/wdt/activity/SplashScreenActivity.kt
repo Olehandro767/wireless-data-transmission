@@ -52,7 +52,7 @@ class SplashScreenActivity : AppCompatActivity() {
             when (this.intent.action) {
                 ACTION_SEND_MULTIPLE -> {
                     _intentFacade.getParcelableArrayListExtra(EXTRA_STREAM, Uri::class.java)
-                        ?.map { File(it.path) }?.let {
+                        ?.map { File(it.path!!) }?.let {
                             _bootLifeCycleHandler.onAcceptedFiles(*it.toTypedArray())
                             this.switchToSendingFiles()
                         }
@@ -64,7 +64,7 @@ class SplashScreenActivity : AppCompatActivity() {
                         this.switchToSendingClipboard()
                     }
                     _intentFacade.getParcelableExtra(EXTRA_STREAM, Uri::class.java)?.let {
-                        _bootLifeCycleHandler.onAcceptedFiles(File(it.path))
+                        _bootLifeCycleHandler.onAcceptedFiles(File(it.path!!))
                         this.switchToSendingFiles()
                     }
                 }

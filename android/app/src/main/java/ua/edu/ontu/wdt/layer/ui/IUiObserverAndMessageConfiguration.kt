@@ -26,4 +26,6 @@ interface IUiObserverAndMessageConfiguration {
     fun createUiDeviceSearchProgressObserver(): IUiGenericObserver<Byte>
 
     fun createUiNewDeviceInfoObserver(): IUiGenericObserver<GetInfoDto>
+
+    fun createFinishObserverForSendClipboardRule(): IUiObserver
 }

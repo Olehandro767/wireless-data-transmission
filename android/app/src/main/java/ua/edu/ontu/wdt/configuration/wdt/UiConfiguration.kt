@@ -46,4 +46,8 @@ class UiConfiguration : IUiObserverAndMessageConfiguration {
 
     override fun createUiNewDeviceInfoObserver(): IUiGenericObserver<GetInfoDto> =
         this.onNewDeviceObserver
+
+    override fun createFinishObserverForSendClipboardRule(): IUiObserver {
+        TODO("Not yet implemented")
+    }
 }

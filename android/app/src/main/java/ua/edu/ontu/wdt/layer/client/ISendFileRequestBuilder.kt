@@ -2,9 +2,7 @@ package ua.edu.ontu.wdt.layer.client
 
 import java.io.File
 
-interface ISendFileRequestBuilder : IRequestBuilder {
-
-    fun ip(ip: String): ISendFileRequestBuilder
+interface ISendFileRequestBuilder : IRequestBuilder, IIpBuilderSetter<ISendFileRequestBuilder> {
 
     fun files(vararg files: File): ISendFileRequestBuilder
 

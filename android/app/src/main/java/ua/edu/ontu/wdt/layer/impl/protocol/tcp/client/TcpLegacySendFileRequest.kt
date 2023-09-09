@@ -36,7 +36,7 @@ class TcpLegacySendFileRequest(
     private val onCancelObserver: IUiGenericObserver<AtomicBoolean>,
     private val onProblemObserver: IUiGenericObserver<String>,
     private val files: Array<out File>,
-) : IRequest {
+) : IRequest { // FIXME to @ua.edu.ontu.wdt.layer.impl.protocol.tcp.client.AbstractTcpRequest
 
     private fun sendFile(
         socket: Socket,
