@@ -16,7 +16,7 @@ import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext.GENERIC_FILE_A
 import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext.WDT_CONFIGURATION
 import ua.edu.ontu.wdt.configuration.wdt.UiConfiguration
 import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionService
-import ua.edu.ontu.wdt.layer.factory.DeviceRequestAbstractFactory
+import ua.edu.ontu.wdt.layer.factory.DeviceRequestAbstractFactory.createDeviceRequestFactory
 import ua.edu.ontu.wdt.layer.factory.DeviceSearcherFactory
 import ua.edu.ontu.wdt.layer.impl.log.StdLog
 import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver
@@ -43,15 +43,15 @@ class DeviceActivity : AppCompatActivity() {
     private fun onDeviceClicked(ip: String): OnClickListener =
         when (this.intent.extras!!.getString(SEND_TYPE_KEY)!!) {
             SEND_FILE_VALUE -> OnClickListener {
-                DeviceRequestAbstractFactory.createDeviceRequestFactory(WDT_CONFIGURATION)
-                    .createSendFileRequestBuilder().files(
+                createDeviceRequestFactory(WDT_CONFIGURATION).createSendFileRequestBuilder().files(
                         *GENERIC_FILE_AND_FOLDER_SERVICE.getAllFiles().toTypedArray()
                     ).ip(ip).build().doRequest()
                 startActivity(Intent(this, FileProgressActivity::class.java))
             }
 
-            SEND_CLIPBOARD_VALUE -> {
-                TODO()
+            SEND_CLIPBOARD_VALUE -> OnClickListener {
+                createDeviceRequestFactory(WDT_CONFIGURATION).createSendClipboardRequestBuilder()
+                    .ip(ip).build().doRequest()
             }
 
             else -> throw IllegalArgumentException("Extras issues")
