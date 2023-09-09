@@ -1,6 +1,10 @@
 package ua.edu.ontu.wdt.service
 
-interface IPermissionService {
+fun interface IPermissionService {
 
-    fun showPermissionsDialogIfTheyNotAcceptedAndRunCommand(run: () -> Unit)
+    fun showPermissionsDialogIfTheyNotAcceptedAndRunCommand(
+        onSuccess: () -> Unit,
+        onRequestPermissions: (permissionCheckResult: Boolean, permissions: Array<out String>) -> Boolean,
+        onPermissionsNotAccepted: () -> Unit,
+    )
 }

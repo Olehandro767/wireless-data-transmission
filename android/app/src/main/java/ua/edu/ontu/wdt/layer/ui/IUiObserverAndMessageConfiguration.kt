@@ -28,4 +28,7 @@ interface IUiObserverAndMessageConfiguration {
     fun createUiNewDeviceInfoObserver(): IUiGenericObserver<GetInfoDto>
 
     fun createFinishObserverForSendClipboardRule(): IUiObserver
+
+    @Deprecated("Redundant")
+    fun createProblemObserverForClientListener(): IUiGenericObserver<Exception>
 }

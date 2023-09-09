@@ -36,4 +36,7 @@ class EmptyUiObserverAndMessageConfigurationImpl : IUiObserverAndMessageConfigur
     override fun createUiNewDeviceInfoObserver(): IUiGenericObserver<GetInfoDto> = EmptyUiObserver()
 
     override fun createFinishObserverForSendClipboardRule(): IUiObserver = EmptyUiObserver<Any>()
+
+    override fun createProblemObserverForClientListener(): IUiGenericObserver<Exception> =
+        EmptyUiObserver()
 }

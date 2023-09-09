@@ -1,7 +1,6 @@
 package ua.edu.ontu.wdt.activity
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.os.Bundle
 import android.view.View.OnClickListener
 import android.widget.Button
@@ -15,6 +14,7 @@ import ua.edu.ontu.wdt.R
 import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext.GENERIC_FILE_AND_FOLDER_SERVICE
 import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext.WDT_CONFIGURATION
 import ua.edu.ontu.wdt.configuration.wdt.UiConfiguration
+import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionRequest
 import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionService
 import ua.edu.ontu.wdt.layer.factory.DeviceRequestAbstractFactory.createDeviceRequestFactory
 import ua.edu.ontu.wdt.layer.factory.DeviceSearcherFactory
@@ -43,15 +43,19 @@ class DeviceActivity : AppCompatActivity() {
     private fun onDeviceClicked(ip: String): OnClickListener =
         when (this.intent.extras!!.getString(SEND_TYPE_KEY)!!) {
             SEND_FILE_VALUE -> OnClickListener {
-                createDeviceRequestFactory(WDT_CONFIGURATION).createSendFileRequestBuilder().files(
-                        *GENERIC_FILE_AND_FOLDER_SERVICE.getAllFiles().toTypedArray()
-                    ).ip(ip).build().doRequest()
-                startActivity(Intent(this, FileProgressActivity::class.java))
+                WDT_CONFIGURATION.asyncConfiguration.runAsync {
+                    createDeviceRequestFactory(WDT_CONFIGURATION).createSendFileRequestBuilder()
+                        .files(
+                            *GENERIC_FILE_AND_FOLDER_SERVICE.getAllFiles().toTypedArray()
+                        ).ip(ip).build().doRequest()
+                }
             }
 
             SEND_CLIPBOARD_VALUE -> OnClickListener {
-                createDeviceRequestFactory(WDT_CONFIGURATION).createSendClipboardRequestBuilder()
-                    .ip(ip).build().doRequest()
+                WDT_CONFIGURATION.asyncConfiguration.runAsync {
+                    createDeviceRequestFactory(WDT_CONFIGURATION).createSendClipboardRequestBuilder()
+                        .ip(ip).build().doRequest()
+                }
             }
 
             else -> throw IllegalArgumentException("Extras issues")
@@ -60,7 +64,7 @@ class DeviceActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_device)
-        _permissionService = createPermissionService()
+        _permissionService = createPermissionService(this)
         _uiConfiguration = WDT_CONFIGURATION.uiConfiguration
         _progressBar = findViewById(R.id.deviceSearchProgressBar)
         _deviceList = findViewById(R.id.deviceSearchListContent)
@@ -68,8 +72,9 @@ class DeviceActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand {
-            DeviceSearcherFactory.createDeviceSearcher(WDT_CONFIGURATION, StdLog()).search()
+        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand(onSuccess = {
+            DeviceSearcherFactory.createDeviceSearcher(WDT_CONFIGURATION, StdLog(javaClass))
+                .search()
             _uiConfiguration.onDeviceSearchProgressObserver = IUiGenericObserver {
                 this.updateProgressBar(it)
             }
@@ -82,6 +87,8 @@ class DeviceActivity : AppCompatActivity() {
                     })
                 }
             }
-        }
+        },
+            onRequestPermissions = createPermissionRequest(this),
+            onPermissionsNotAccepted = {})
     }
 }

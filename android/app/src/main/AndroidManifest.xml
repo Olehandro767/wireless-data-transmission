@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+<!--    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />-->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
@@ -74,9 +74,11 @@
             android:name=".system.ApplicationBroadcastReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="APP_SPECIFIC_BROADCAST" />
+                <action android:name="android.intent.action.ACTION_FOUND" />
             </intent-filter>
         </receiver>
+
+        <service android:name=".system.ApplicationBackgroundService" />
 
     </application>
 

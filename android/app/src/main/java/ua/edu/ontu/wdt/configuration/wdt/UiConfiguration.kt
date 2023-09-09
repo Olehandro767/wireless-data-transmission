@@ -15,29 +15,22 @@ class UiConfiguration : IUiObserverAndMessageConfiguration {
     var onNewDeviceObserver = IUiGenericObserver<GetInfoDto> {}
     var onDeviceSearchProgressObserver = IUiGenericObserver<Byte> {}
 
-    override fun createProgressObserverForSendFileRule(): IUiGenericObserver<FileProgressDto> {
-        TODO()
-    }
+    override fun createProgressObserverForSendFileRule(): IUiGenericObserver<FileProgressDto> =
+        IUiGenericObserver { }
 
-    override fun createFinishObserverForSendFileRule(): IUiObserver {
-        TODO("Not yet implemented")
-    }
+    override fun createFinishObserverForSendFileRule(): IUiObserver = IUiObserver { }
 
-    override fun createProblemObserverForSendFileRule(): IUiGenericObserver<String> {
-        TODO("Not yet implemented")
-    }
+    override fun createProblemObserverForSendFileRule(): IUiGenericObserver<String> =
+        IUiGenericObserver { }
 
-    override fun createCancelObserverForSendFileRule(): IUiGenericObserver<AtomicBoolean> {
-        TODO("Not yet implemented")
-    }
+    override fun createCancelObserverForSendFileRule(): IUiGenericObserver<AtomicBoolean> =
+        IUiGenericObserver { }
 
-    override fun createConfirmFileMessage(): IUiGenericConfirmMessage<ConfirmFileDto> {
-        TODO("Not yet implemented")
-    }
+    override fun createConfirmFileMessage(): IUiGenericConfirmMessage<ConfirmFileDto> =
+        IUiGenericConfirmMessage { dto, onAccept, onCancel -> }
 
-    override fun createBeforeSendCommonObserver(): IUiGenericObserver<GetInfoDto> {
-        TODO("Not yet implemented")
-    }
+    override fun createBeforeSendCommonObserver(): IUiGenericObserver<GetInfoDto> =
+        IUiGenericObserver { }
 
     override fun createCancelObserver(): IUiGenericObserver<AtomicBoolean> = this.onCancel
 
@@ -47,7 +40,7 @@ class UiConfiguration : IUiObserverAndMessageConfiguration {
     override fun createUiNewDeviceInfoObserver(): IUiGenericObserver<GetInfoDto> =
         this.onNewDeviceObserver
 
-    override fun createFinishObserverForSendClipboardRule(): IUiObserver {
-        TODO("Not yet implemented")
-    }
+    override fun createFinishObserverForSendClipboardRule(): IUiObserver = IUiObserver { }
+    override fun createProblemObserverForClientListener(): IUiGenericObserver<Exception> =
+        IUiGenericObserver { }
 }

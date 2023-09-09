@@ -18,12 +18,12 @@ data class WdtContextConfiguration(
     override var downloadFolderPath: String = "",
     override var ipv4: Array<String> = getIpsV4ForCurrentDevice(),
     override var ipv6: Array<String>? = null,
-    override var numberOfListeners: Int = 0,
+    override var numberOfListeners: Int = getRuntime().availableProcessors(),
     override var deviceType: DeviceType = DeviceType.MOBILE,
     override var isEncryptionEnabled: Boolean = false,
     override var maxNumberOfConnections: Int = 15000,
     override var maxThreadsForSending: Int = 0,
-    override var maxThreadsForSearching: Int = getRuntime().availableProcessors() * 5
+    override var maxThreadsForSearching: Int = numberOfListeners * 5
 ) : IContext {
 
     override fun equals(other: Any?): Boolean {

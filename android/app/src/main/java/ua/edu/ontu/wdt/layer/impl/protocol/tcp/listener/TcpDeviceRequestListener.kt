@@ -8,6 +8,7 @@ import ua.edu.ontu.wdt.layer.client.RequestDto
 import ua.edu.ontu.wdt.layer.impl.handler.UnsecureRequestResponseHandler
 import ua.edu.ontu.wdt.layer.impl.log.EmptyLogger
 import ua.edu.ontu.wdt.layer.impl.protocol.tcp.TcpIOFactory
+import ua.edu.ontu.wdt.layer.impl.protocol.tcp.client.TcpGetInfoRequest
 import java.net.ServerSocket
 import java.net.Socket
 import java.util.concurrent.Semaphore
@@ -16,7 +17,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 class TcpDeviceRequestListener(
     handler: IIOSecurityHandler,
     private val _genericConfiguration: WdtGenericConfiguration<*, *>,
-    messageHandler: IIOSecurityHandler = UnsecureRequestResponseHandler(),
+    private val _messageHandler: IIOSecurityHandler = UnsecureRequestResponseHandler(),
     private val _semaphore: Semaphore = Semaphore(_genericConfiguration.context.maxNumberOfConnections),
     private val _logger: ILog = EmptyLogger(),
     onEndRule: ITcpLambda = ITcpLambda {
@@ -25,25 +26,37 @@ class TcpDeviceRequestListener(
     },
 ) : AbstractDeviceRequestListener<ServerSocket, Socket>(
     _logger,
-    _genericConfiguration.asyncConfiguration,
+    _genericConfiguration,
     TcpGetInfo(handler, _genericConfiguration.context, onEndRule),
     TcpSendClipboard(onEndRule),
-    TcpAcceptClipboard(_genericConfiguration, messageHandler, onEndRule),
+    TcpAcceptClipboard(_genericConfiguration, _messageHandler, onEndRule),
     TcpGetFileSystem(onEndRule),
     if (_genericConfiguration.context.maxThreadsForSending <= 1) TcpLegacyAcceptFileService(
         _logger,
         onEndRule,
-        messageHandler,
+        _messageHandler,
         _genericConfiguration
     ) else TcpMultiAcceptFileService(
         _logger,
         onEndRule,
-        messageHandler,
+        _messageHandler,
         _genericConfiguration
     ),
 ) {
 
     private var _isRun: AtomicBoolean = AtomicBoolean(false)
+    override val isRunning: Boolean
+        get() {
+            return try {
+                TcpGetInfoRequest(
+                    _genericConfiguration.context,
+                    _messageHandler
+                ).doRequest("127.0.0.1")
+                true
+            } catch (ignore: Exception) {
+                false
+            }
+        }
 
     override fun initListener(): ServerSocket = ServerSocket(_genericConfiguration.context.port)
 

@@ -10,10 +10,9 @@ import ua.edu.ontu.wdt.service.impl.intent.ModernIntentImpl
 object IntentConfigurationFactory {
 
     fun createIntentConfiguration(intent: Intent): IGenericIntent {
-        if (SDK_INT >= TIRAMISU) {
-            return ModernIntentImpl(intent)
-        } else {
-            return LegacyIntentImpl(intent)
+        return when {
+            (SDK_INT >= TIRAMISU) -> ModernIntentImpl(intent)
+            else -> LegacyIntentImpl(intent)
         }
     }
 }

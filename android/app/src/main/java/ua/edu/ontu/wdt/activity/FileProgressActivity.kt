@@ -7,7 +7,7 @@ import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermission
 
 class FileProgressActivity : AppCompatActivity() {
 
-    private val _permissionService = createPermissionService()
+    private val _permissionService = createPermissionService(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

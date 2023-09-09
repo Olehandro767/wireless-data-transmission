@@ -13,6 +13,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        _permissionService = createPermissionService()
+        _permissionService = createPermissionService(this)
     }
 }

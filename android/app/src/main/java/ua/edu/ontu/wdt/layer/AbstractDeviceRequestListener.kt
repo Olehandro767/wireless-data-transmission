@@ -11,8 +11,8 @@ import ua.edu.ontu.wdt.layer.client.RequestDto
 import java.util.concurrent.atomic.AtomicBoolean
 
 abstract class AbstractDeviceRequestListener<T, C>(
-    private val logger: ILog,
-    private val asyncConfiguration: IAsyncConfiguration,
+    private val _logger: ILog,
+    private val _genericConfiguration: WdtGenericConfiguration<*, *>,
     private val getInfo: (RequestDto<C>) -> Unit,
     private val getClipboard: (RequestDto<C>) -> Unit,
     private val acceptClipboard: (RequestDto<C>) -> Unit,
@@ -31,9 +31,15 @@ abstract class AbstractDeviceRequestListener<T, C>(
     abstract fun validateBeforeStop(request: RequestDto<C>): Boolean
 
     fun threadLoop(isRun: AtomicBoolean, listener: T) {
-        this.asyncConfiguration.runIOOperationAsync {
+        _genericConfiguration.asyncConfiguration.runIOOperationAsync {
             while (isRun.get()) {
-                this.handleRequestAsync(isRun, this.createContext(listener))
+                try {
+                    this.handleRequestAsync(isRun, this.createContext(listener))
+                } catch (exception: Exception) {
+                    _genericConfiguration.uiConfiguration.createProblemObserverForClientListener()
+                        .notifyUi(exception)
+                    _logger.error(exception.toString(), exception)
+                }
             }
         }
     }
@@ -46,6 +52,7 @@ abstract class AbstractDeviceRequestListener<T, C>(
 
         when (command) {
             GET_INFO -> {
+                _logger.info("$GET_INFO: to $request")
                 this.getInfo(request)
             }
 
@@ -76,7 +83,7 @@ abstract class AbstractDeviceRequestListener<T, C>(
 
     override fun serve() {
         val listener = this.initListener()
-        this.logger.info("Device listener started")
+        _logger.info("Device listener started")
         launch(AtomicBoolean(true), listener)
     }
 }

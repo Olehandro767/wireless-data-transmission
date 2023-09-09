@@ -1,5 +1,6 @@
 package ua.edu.ontu.wdt.activity
 
+import android.Manifest.permission.INTERNET
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.Intent.ACTION_SEND
@@ -15,8 +16,10 @@ import ua.edu.ontu.wdt.ExtraConstants.ExtraValues.SEND_FILE_VALUE
 import ua.edu.ontu.wdt.R
 import ua.edu.ontu.wdt.handler.ApplicationBootLifeCycleHandler
 import ua.edu.ontu.wdt.helpful.facade.IntentFacade
+import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionRequest
 import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionService
 import ua.edu.ontu.wdt.service.IPermissionService
+import ua.edu.ontu.wdt.system.ApplicationBroadcastReceiver
 import java.io.File
 
 @SuppressLint("CustomSplashScreen")
@@ -42,13 +45,14 @@ class SplashScreenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         _intentFacade = IntentFacade(this.intent)
-        _permissionService = createPermissionService()
+        _permissionService = createPermissionService(this)
         _bootLifeCycleHandler = ApplicationBootLifeCycleHandler(this)
     }
 
     override fun onStart() {
         super.onStart()
-        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand {
+        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand(onSuccess = {
+            this.sendBroadcast(Intent(this, ApplicationBroadcastReceiver::class.java), INTERNET)
             when (this.intent.action) {
                 ACTION_SEND_MULTIPLE -> {
                     _intentFacade.getParcelableArrayListExtra(EXTRA_STREAM, Uri::class.java)
@@ -71,6 +75,14 @@ class SplashScreenActivity : AppCompatActivity() {
 
                 else -> this.startActivity(Intent(this, MainActivity::class.java))
             }
-        }
+        }, onRequestPermissions = createPermissionRequest(this), onPermissionsNotAccepted = {
+
+        })
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int, permissions: Array<out String>, grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 }

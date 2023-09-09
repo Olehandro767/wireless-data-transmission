@@ -27,7 +27,7 @@ class TcpGetInfoRequest(
         messageSender.sendMessageToRemoteDevice(prepareRequestType(GET_INFO))
         val result = messageReader.readMessageFromRemoteDevice().split(',')
         return GetInfoDto(
-            socket.inetAddress.hostAddress,
+            socket.inetAddress.hostAddress!!,
             result[0],
             result[1],
             findType(result[2]),

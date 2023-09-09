@@ -11,6 +11,8 @@ interface IDeviceRequestListener {
         const val SEND_FILES_OR_FOLDERS = "send_files_or_folders"
     }
 
+    val isRunning: Boolean
+
     fun serve()
 
     fun stop()

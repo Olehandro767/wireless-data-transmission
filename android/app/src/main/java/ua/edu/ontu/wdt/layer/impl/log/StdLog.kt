@@ -1,38 +1,41 @@
 package ua.edu.ontu.wdt.layer.impl.log
 
+import android.util.Log
 import ua.edu.ontu.wdt.layer.ILog
 
-class StdLog : ILog {
+class StdLog<T>(tag: Class<T>) : ILog {
+
+    private val _tag = tag.simpleName
 
     override fun warn(msg: String) {
-        println(msg)
+        Log.w(_tag, msg)
     }
 
     override fun warn(msg: String, exception: Exception) {
-        println(msg)
+        Log.w(_tag, msg, exception)
     }
 
     override fun info(msg: String) {
-        println(msg)
+        Log.i(_tag, msg)
     }
 
     override fun info(msg: String, exception: Exception) {
-        println(msg)
+        Log.i(_tag, msg, exception)
     }
 
     override fun debug(msg: String) {
-        println(msg)
+        Log.d(_tag, msg)
     }
 
     override fun debug(msg: String, exception: Exception) {
-        println(msg)
+        Log.d(_tag, msg, exception)
     }
 
     override fun error(msg: String) {
-        println(msg)
+        Log.e(_tag, msg)
     }
 
     override fun error(msg: String, exception: Exception) {
-        println(msg)
+        Log.e(_tag, msg, exception)
     }
 }
