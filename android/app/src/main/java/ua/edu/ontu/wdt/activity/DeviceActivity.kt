@@ -14,7 +14,6 @@ import ua.edu.ontu.wdt.R
 import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext.GENERIC_FILE_AND_FOLDER_SERVICE
 import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext.WDT_CONFIGURATION
 import ua.edu.ontu.wdt.configuration.wdt.UiConfiguration
-import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionRequest
 import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionService
 import ua.edu.ontu.wdt.layer.factory.DeviceRequestAbstractFactory.createDeviceRequestFactory
 import ua.edu.ontu.wdt.layer.factory.DeviceSearcherFactory
@@ -72,7 +71,7 @@ class DeviceActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand(onSuccess = {
+        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand(this, onSuccess = {
             DeviceSearcherFactory.createDeviceSearcher(WDT_CONFIGURATION, StdLog(javaClass))
                 .search()
             _uiConfiguration.onDeviceSearchProgressObserver = IUiGenericObserver {
@@ -87,8 +86,6 @@ class DeviceActivity : AppCompatActivity() {
                     })
                 }
             }
-        },
-            onRequestPermissions = createPermissionRequest(this),
-            onPermissionsNotAccepted = {})
+        }, null)
     }
 }

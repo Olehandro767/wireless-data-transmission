@@ -12,7 +12,8 @@ class ApplicationBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
         if (context != null) {
-            createPermissionService(context).showPermissionsDialogIfTheyNotAcceptedAndRunCommand(onSuccess = {
+            createPermissionService(context).showPermissionsDialogIfTheyNotAcceptedAndRunCommand(null,
+                onSuccess = {
                     WDT_CONFIGURATION.asyncConfiguration.runIOOperationAsync {
                         val listener = createDeviceListener(
                             WDT_CONFIGURATION, StdLog(javaClass)
@@ -23,8 +24,9 @@ class ApplicationBroadcastReceiver : BroadcastReceiver() {
                         }
                     }
                 },
-                onRequestPermissions = { false },
-                onPermissionsNotAccepted = {})
+                onPermissionsNotAccepted = {
+                    // TODO
+                })
         }
     }
 }

@@ -1,0 +1,40 @@
+<mxfile host="app.diagrams.net" modified="2023-09-12T22:11:06.006Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Safari/537.36" version="21.7.4" etag="VnCHc4c-SaTaGwxH0r4m" type="device">
+  <diagram id="9RUfgK_af0SGb78lV68b" name="layer">
+    <mxGraphModel dx="1434" dy="879" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-1" value="&lt;i style=&quot;border-color: var(--border-color); font-weight: 400;&quot;&gt;&amp;lt;&amp;lt;Interface&amp;gt;&amp;gt;&lt;/i&gt;&lt;br style=&quot;border-color: var(--border-color); font-weight: 400;&quot;&gt;&lt;b style=&quot;border-color: var(--border-color);&quot;&gt;ILog&lt;/b&gt;" style="swimlane;fontStyle=1;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="290" width="340" height="256" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-3" value="" style="line;strokeWidth=1;fillColor=none;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;strokeColor=inherit;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="40" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-4" value="+&amp;nbsp;warn(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="48" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-6" value="+&amp;nbsp;warn(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String, exception: Exception&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="74" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-7" value="+&amp;nbsp;info(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="100" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-8" value="+&amp;nbsp;info(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String, exception: Exception&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="126" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-10" value="+&amp;nbsp;debug(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String, exception: Exception&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="152" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-9" value="+ debug(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="178" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-11" value="+&amp;nbsp;error(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="204" width="340" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="jQhm8iROYf4dZMxMd6Jg-12" value="+ error(&lt;span style=&quot;font-family: &amp;quot;JetBrains Mono&amp;quot;, monospace; font-size: 9.8pt;&quot;&gt;msg: String, exception: Exception&lt;/span&gt;)" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;whiteSpace=wrap;html=1;fontColor=#000000;" vertex="1" parent="jQhm8iROYf4dZMxMd6Jg-1">
+          <mxGeometry y="230" width="340" height="26" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

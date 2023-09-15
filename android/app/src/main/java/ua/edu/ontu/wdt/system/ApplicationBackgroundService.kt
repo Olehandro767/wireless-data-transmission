@@ -21,12 +21,12 @@ class ApplicationBackgroundService : Service() {
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand(onSuccess = {
+        _permissionService.showPermissionsDialogIfTheyNotAcceptedAndRunCommand(null, onSuccess = {
             DeviceRequestListenerFactory.createDeviceListener(
                 ApplicationGlobalContext.WDT_CONFIGURATION,
                 StdLog(ApplicationBackgroundService::class.java)
             ).serve()
-        }, onRequestPermissions = { false }, onPermissionsNotAccepted = {})
+        }, null)
         return super.onStartCommand(intent, flags, startId)
     }
 

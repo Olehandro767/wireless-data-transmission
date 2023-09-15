@@ -147,3 +147,11 @@ i
 `app/src/main/java/ua/edu/ontu/wdt/service/impl/permission/Api33AndHigherPermissionServiceImpl.kt,2/f/2f19e7835975f894edf9eb0f511ebf01d2350826
 ˆ
 Xapp/src/main/java/ua/edu/ontu/wdt/service/impl/permission/LegacyPermissionServiceImpl.kt,f/2/f2e3709a1840a491cb5113a4c119480494996d1b
+t
+Dapp/src/main/java/ua/edu/ontu/wdt/layer/client/IIOSecurityHandler.kt,c/7/c7b32f52c5d11c5b8f3fd5eba3b69c5b9dde26bd
+
+Oapp/src/main/java/ua/edu/ontu/wdt/layer/handler/io/IExternalStorageIOHandler.kt,2/4/24f1261b91e40b9cad07d4f14a6062fb02dbf6b5
+t
+Dapp/src/main/java/ua/edu/ontu/wdt/layer/handler/io/IIOFileContext.kt,d/5/d50160d29d1062c421639cf4c8218ce4e6ac0f60
+d
+4app/src/main/java/ua/edu/ontu/wdt/layer/IExternal.kt,7/d/7dff15d05050104c805a7d182f6c24a3050b1814
