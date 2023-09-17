@@ -2,6 +2,7 @@ package ua.edu.ontu.wdt.layer.impl.protocol.tcp.listener
 
 import ua.edu.ontu.wdt.layer.AbstractDeviceRequestListener
 import ua.edu.ontu.wdt.layer.ILog
+import ua.edu.ontu.wdt.layer.RequestCommandConfiguration
 import ua.edu.ontu.wdt.layer.WdtGenericConfiguration
 import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
 import ua.edu.ontu.wdt.layer.client.RequestDto
@@ -25,23 +26,17 @@ class TcpDeviceRequestListener(
         _semaphore.release()
     },
 ) : AbstractDeviceRequestListener<ServerSocket, Socket>(
-    _logger,
-    _genericConfiguration,
-    TcpGetInfo(handler, _genericConfiguration.context, onEndRule),
-    TcpSendClipboard(onEndRule),
-    TcpAcceptClipboard(_genericConfiguration, _messageHandler, onEndRule),
-    TcpGetFileSystem(onEndRule),
-    if (_genericConfiguration.context.maxThreadsForSending <= 1) TcpLegacyAcceptFileService(
-        _logger,
-        onEndRule,
-        _messageHandler,
-        _genericConfiguration
-    ) else TcpMultiAcceptFileService(
-        _logger,
-        onEndRule,
-        _messageHandler,
-        _genericConfiguration
-    ),
+    _logger, _genericConfiguration, RequestCommandConfiguration(
+        TcpGetInfo(handler, _genericConfiguration.context, onEndRule),
+        TcpSendClipboard(onEndRule),
+        TcpAcceptClipboard(_genericConfiguration, _messageHandler, onEndRule),
+        TcpGetFileSystem(onEndRule),
+        if (_genericConfiguration.context.maxThreadsForSending <= 1) TcpLegacyAcceptFileService(
+            _logger, onEndRule, _messageHandler, _genericConfiguration
+        ) else TcpMultiAcceptFileService(
+            _logger, onEndRule, _messageHandler, _genericConfiguration
+        ),
+    )
 ) {
 
     private var _isRun: AtomicBoolean = AtomicBoolean(false)
@@ -49,8 +44,7 @@ class TcpDeviceRequestListener(
         get() {
             return try {
                 TcpGetInfoRequest(
-                    _genericConfiguration.context,
-                    _messageHandler
+                    _genericConfiguration.context, _messageHandler
                 ).doRequest("127.0.0.1")
                 true
             } catch (ignore: Exception) {

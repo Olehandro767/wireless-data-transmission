@@ -155,3 +155,5 @@ d
 4app/src/main/java/ua/edu/ontu/wdt/layer/IExternal.kt,7/d/7dff15d05050104c805a7d182f6c24a3050b1814
 t
 Dapp/src/main/java/ua/edu/ontu/wdt/layer/handler/io/IIOFileContext.kt,d/5/d50160d29d1062c421639cf4c8218ce4e6ac0f60
+v
+Fapp/src/main/java/ua/edu/ontu/wdt/layer/RequestCommandConfiguration.kt,f/6/f604b163ca288c6aeab0e2de8eae0485ba0a859b

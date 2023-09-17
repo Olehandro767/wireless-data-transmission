@@ -13,11 +13,7 @@ import java.util.concurrent.atomic.AtomicBoolean
 abstract class AbstractDeviceRequestListener<T, C>(
     private val _logger: ILog,
     private val _genericConfiguration: WdtGenericConfiguration<*, *>,
-    private val getInfo: (RequestDto<C>) -> Unit,
-    private val getClipboard: (RequestDto<C>) -> Unit,
-    private val acceptClipboard: (RequestDto<C>) -> Unit,
-    private val getFileSystem: (RequestDto<C>) -> Unit,
-    private val acceptFileOrFolder: (RequestDto<C>) -> Unit,
+    private val _requestCommandConfiguration: RequestCommandConfiguration<C>,
 ) : IDeviceRequestListener {
 
     abstract fun initListener(): T // example: get server socket
@@ -46,30 +42,29 @@ abstract class AbstractDeviceRequestListener<T, C>(
 
     fun manageRequest(isRun: AtomicBoolean, request: RequestDto<C>) {
         val command = request.message.substring(
-            request.message.indexOf('(') + 1,
-            request.message.indexOf(')')
+            request.message.indexOf('(') + 1, request.message.indexOf(')')
         )
 
         when (command) {
             GET_INFO -> {
                 _logger.info("$GET_INFO: to $request")
-                this.getInfo(request)
+                _requestCommandConfiguration.getInfo(request)
             }
 
             SEND_FILES_OR_FOLDERS -> {
-                this.acceptFileOrFolder(request)
+                _requestCommandConfiguration.acceptFileOrFolder(request)
             }
 
             GET_CLIPBOARD -> {
-                this.getClipboard(request)
+                _requestCommandConfiguration.getClipboard(request)
             }
 
             SEND_CLIPBOARD -> {
-                this.acceptClipboard(request)
+                _requestCommandConfiguration.acceptClipboard(request)
             }
 
             GET_FILE_SYSTEM -> {
-                this.getFileSystem(request)
+                _requestCommandConfiguration.getFileSystem(request)
             }
 
             STOP -> {
