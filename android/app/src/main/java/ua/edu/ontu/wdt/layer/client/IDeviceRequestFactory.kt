@@ -6,5 +6,7 @@ interface IDeviceRequestFactory {
 
     fun createSendFileRequestBuilder(): ISendFileRequestBuilder
 
+    fun getClipboardRequestBuilder(): IGetClipboardRequestBuilder
+
     fun createSendClipboardRequestBuilder(): ISendClipboardRequestBuilder
 }

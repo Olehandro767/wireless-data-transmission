@@ -3,6 +3,7 @@ package ua.edu.ontu.wdt.layer.impl.protocol.tcp.client
 import ua.edu.ontu.wdt.layer.ILog
 import ua.edu.ontu.wdt.layer.WdtGenericConfiguration
 import ua.edu.ontu.wdt.layer.client.IDeviceRequestFactory
+import ua.edu.ontu.wdt.layer.client.IGetClipboardRequestBuilder
 import ua.edu.ontu.wdt.layer.client.IGetInfoRequest
 import ua.edu.ontu.wdt.layer.client.IIOSecurityHandler
 import ua.edu.ontu.wdt.layer.client.ISendClipboardRequestBuilder
@@ -42,6 +43,10 @@ class TcpDeviceRequestFactory(
             _genericConfiguration.uiConfiguration.createCancelObserverForSendFileRule(),
             _genericConfiguration.uiConfiguration.createProblemObserverForSendFileRule(),
         )
+
+    override fun getClipboardRequestBuilder(): IGetClipboardRequestBuilder {
+        TODO("Not yet implemented")
+    }
 
     override fun createSendClipboardRequestBuilder(): ISendClipboardRequestBuilder =
         TcpSendClipboardRequestBuilder(_messageHandler, _genericConfiguration)

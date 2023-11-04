@@ -8,6 +8,7 @@ import ua.edu.ontu.wdt.layer.dto.GetInfoDto
 import ua.edu.ontu.wdt.layer.dto.file.ConfirmFileDto
 import ua.edu.ontu.wdt.layer.dto.file.FileProgressDto
 import ua.edu.ontu.wdt.layer.factory.DeviceRequestAbstractFactory
+import ua.edu.ontu.wdt.layer.file.IContentResolver
 import ua.edu.ontu.wdt.layer.impl.protocol.tcp.TcpMessageReader
 import ua.edu.ontu.wdt.layer.impl.protocol.tcp.TcpMessageSender
 import ua.edu.ontu.wdt.layer.impl.protocol.tcp.TcpNativeChunkedDataReader
@@ -15,7 +16,6 @@ import ua.edu.ontu.wdt.layer.ui.IUiGenericConfirmMessage
 import ua.edu.ontu.wdt.layer.ui.IUiGenericObserver
 import ua.edu.ontu.wdt.layer.utils.FileUtils
 import java.io.File
-import java.io.FileOutputStream
 import java.net.Socket
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -37,6 +37,7 @@ class TcpLegacyAcceptFileService(
         _genericConfiguration.uiConfiguration.createBeforeSendCommonObserver()
     private val _onProblemObserver: IUiGenericObserver<String> =
         _genericConfiguration.uiConfiguration.createProblemObserverForSendFileRule()
+    private val _contentResolver: IContentResolver = _genericConfiguration.contentResolver
 
     private fun acceptFile(
         socket: Socket, messageReader: TcpMessageReader, messageSender: TcpMessageSender
@@ -49,23 +50,19 @@ class TcpLegacyAcceptFileService(
         val nativeChunkedFileReader = TcpNativeChunkedDataReader(
             socket, bufferSize, this._messageHandler, messageReader.toInputStream()
         )
-        val file = File(path)
-        val fileOutputStream = FileOutputStream(file)
+        val file = _contentResolver.prepareFile(path)
         var fileAcceptedLength = 0L
-        file.createNewFile() // TODO check
         this._logger.info(path)
 
         while (fileLength != fileAcceptedLength && nativeChunkedFileReader.readChunk().readDataSize > 0) {
             fileAcceptedLength += nativeChunkedFileReader.readDataSize
-            fileOutputStream.write(
-                nativeChunkedFileReader.buffer, 0, nativeChunkedFileReader.readDataSize
-            )
+            file.write(nativeChunkedFileReader.buffer, 0, nativeChunkedFileReader.readDataSize)
             this._logger.info("Accept File Service: accepted chunk")
             this._progressUiObserver.notifyUi(
                 FileProgressDto(
                     fileLength,
-                    file.name,
-                    file.absolutePath,
+                    file.fileName,
+                    file.filePath,
                     ((fileAcceptedLength / fileLength) * 100).toByte()
                 )
             )

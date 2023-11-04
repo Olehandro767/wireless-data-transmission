@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext
+import ua.edu.ontu.wdt.configuration.wdt.ApplicationGlobalContext.ANDROID_PACKAGE_CONTEXT
 import ua.edu.ontu.wdt.helpful.factory.PermissionServiceFactory.createPermissionService
 import ua.edu.ontu.wdt.layer.factory.DeviceRequestListenerFactory
 import ua.edu.ontu.wdt.layer.impl.log.StdLog
@@ -16,6 +17,10 @@ class ApplicationBackgroundService : Service() {
     override fun onCreate() {
         super.onCreate()
         _permissionService = createPermissionService(this)
+
+        if (ANDROID_PACKAGE_CONTEXT == null) {
+            ANDROID_PACKAGE_CONTEXT = this
+        }
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

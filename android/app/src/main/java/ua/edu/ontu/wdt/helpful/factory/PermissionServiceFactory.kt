@@ -11,7 +11,7 @@ import ua.edu.ontu.wdt.service.impl.permission.LegacyPermissionServiceImpl
 object PermissionServiceFactory {
 
     fun createPermissionService(context: Context): IPermissionService = when {
-        (SDK_INT >= TIRAMISU) -> Api33AndHigherPermissionServiceImpl()
+        (SDK_INT >= TIRAMISU) -> Api33AndHigherPermissionServiceImpl(context)
         (SDK_INT >= M) -> LegacyPermissionServiceImpl(context)
         else -> (IPermissionService { _, onSuccess, _ -> onSuccess() })
     }
